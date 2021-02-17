@@ -1,6 +1,6 @@
 package com.safetynet.alerts.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import javax.persistence.Column;
@@ -9,35 +9,38 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.*;
-
 
 @Data
 @Entity
-@Table(name = "medicalrecords")
-public class MedicalRecord {
+@Table(name = "persons")
+public class Person {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    Long id;
+    private Long id;
 
     @Column(name = "first_name")
-    String firstName;
+    @JsonProperty("")
+    private String firstName;
 
     @Column(name = "last_name")
-    String lastName;
+    private String lastName;
 
-    @Column(name = "birth_date")
-    @JsonProperty("birthdate")
-    @JsonFormat(pattern = "dd/MM/yyyy")
-    Date birthDate;
+    @Column(name = "address")
+    private String address;
 
-    @Column(name = "medications")
-    String medications[];
+    @Column(name = "city")
+    private String city;
 
-    @Column(name = "allergies")
-    String[] allergies;
+    @Column(name = "zip")
+    private Integer zip;
+
+    @Column(name = "phone")
+    private String phone;
+
+    @Column(name = "email")
+    private String email;
 
 
 
