@@ -34,7 +34,7 @@ public class MedicalRecord {
     Date birthDate;
 
     @Column(name = "medications")
-    String medications[];
+    String[] medications;
 
     @Column(name = "allergies")
     String[] allergies;
