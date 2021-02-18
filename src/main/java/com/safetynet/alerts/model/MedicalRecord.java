@@ -20,24 +20,24 @@ public class MedicalRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    Long id;
+    private Long id;
 
     @Column(name = "first_name")
-    String firstName;
+    private String firstName;
 
     @Column(name = "last_name")
-    String lastName;
+    private String lastName;
 
     @Column(name = "birth_date")
     @JsonProperty("birthdate")
     @JsonFormat(pattern = "dd/MM/yyyy")
-    Date birthDate;
+    private Date birthDate;
 
     @Column(name = "medications")
-    String[] medications;
+    private String[] medications;
 
     @Column(name = "allergies")
-    String[] allergies;
+    private String[] allergies;
 
 
 

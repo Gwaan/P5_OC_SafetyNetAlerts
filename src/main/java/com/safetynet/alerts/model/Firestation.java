@@ -16,13 +16,13 @@ public class Firestation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    Long id;
+    private Long id;
 
     @Column(name = "station")
-    Byte station;
+    private Byte station;
 
     @Column(name = "address")
-    String address;
+    private String address;
 
 
 }

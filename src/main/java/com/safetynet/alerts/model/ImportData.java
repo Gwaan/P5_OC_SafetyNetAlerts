@@ -10,10 +10,10 @@ public class ImportData {
     List<Person> persons;
 
     @JsonProperty("firestations")
-    List<Firestation> fireStations;
+    private List<Firestation> fireStations;
 
     @JsonProperty("medicalrecords")
-    List<MedicalRecord> medicalRecords;
+    private List<MedicalRecord> medicalRecords;
 
 
 }
