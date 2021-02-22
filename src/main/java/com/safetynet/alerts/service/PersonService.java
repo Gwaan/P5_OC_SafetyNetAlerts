@@ -33,15 +33,14 @@ public class PersonService {
 
     public Person findByFirstNameAndLastName(String firstName,
             String lastName) {
-        LOGGER.info(
-                "PersonService -> Searching for person " + firstName + " " + lastName
-                        + " ...");
+        LOGGER.info("PersonService -> Searching for person " + firstName + " "
+                + lastName + " ...");
         Person person = personRepository.findByFirstNameAndLastName(firstName,
                 lastName);
 
         if (person == null) {
-            LOGGER.error(
-                    "Person " + firstName + " " + lastName + " doesn't exist");
+            LOGGER.error("PersonService -> " + firstName + " " + lastName
+                    + " doesn't exist");
             throw new NotFoundException(
                     "Person " + firstName + " " + lastName + " doesn't exist");
         }
@@ -49,5 +48,6 @@ public class PersonService {
                 + " was found");
         return person;
     }
+
 
 }
