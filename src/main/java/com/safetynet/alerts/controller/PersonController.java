@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -51,6 +52,8 @@ public class PersonController {
                 .path("/{id}")
                 .buildAndExpand(personToSave.getId())
                 .toUri();
+        LOGGER.info("PersonController -> Successfully add person: "
+                + personToSave.toString());
         return ResponseEntity.created(location).build();
     }
 
@@ -70,7 +73,21 @@ public class PersonController {
         personToUpdate.setZip(person.getZip());
 
         final Person personUpdated = personService.save(personToUpdate);
+        LOGGER.info("PersonController -> Successfully updated person: "
+                + personUpdated.toString());
         return ResponseEntity.ok(personUpdated);
+
+    }
+
+    @DeleteMapping("/person/{firstName}_{lastName}")
+    public ResponseEntity<Void> deletePerson(@PathVariable String firstName,
+            @PathVariable String lastName) {
+        Person personToDelete = personService.findByFirstNameAndLastName(
+                firstName, lastName);
+        personService.deletePerson(personToDelete);
+        LOGGER.info("PersonController -> Successfully deleted person: "
+                + personToDelete.toString());
+        return ResponseEntity.ok().build();
 
     }
 }

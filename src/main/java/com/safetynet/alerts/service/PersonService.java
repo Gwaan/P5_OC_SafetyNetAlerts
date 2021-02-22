@@ -33,7 +33,7 @@ public class PersonService {
 
     public Person findByFirstNameAndLastName(String firstName,
             String lastName) {
-        LOGGER.info("PersonService -> Searching for person " + firstName + " "
+        LOGGER.debug("PersonService -> Searching for person " + firstName + " "
                 + lastName + " ...");
         Person person = personRepository.findByFirstNameAndLastName(firstName,
                 lastName);
@@ -47,6 +47,10 @@ public class PersonService {
         LOGGER.info("PersonService -> Person " + firstName + " " + lastName
                 + " was found");
         return person;
+    }
+
+    public void deletePerson(Person person) {
+        personRepository.delete(person);
     }
 
 
