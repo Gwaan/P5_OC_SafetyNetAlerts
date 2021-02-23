@@ -5,5 +5,6 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface MedicalRecordRepository extends CrudRepository<MedicalRecord, Long> {
 
+    MedicalRecord findByFirstNameAndLastName(String firstName, String lastName);
 
 }
