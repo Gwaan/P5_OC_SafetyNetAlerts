@@ -51,4 +51,14 @@ public class MedicalRecordService {
         medicalRecordRepository.delete(medicalRecord);
     }
 
+    public MedicalRecord updateMedicalRecord(MedicalRecord medicalRecordBody,
+            MedicalRecord medicalRecordUpdated) {
+
+        medicalRecordUpdated.setBirthDate(medicalRecordBody.getBirthDate());
+        medicalRecordUpdated.setMedications(medicalRecordBody.getMedications());
+        medicalRecordUpdated.setAllergies(medicalRecordBody.getAllergies());
+
+        return medicalRecordUpdated;
+    }
+
 }

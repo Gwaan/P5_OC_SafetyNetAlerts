@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
@@ -53,11 +54,11 @@ public class MedicalRecordController {
         return ResponseEntity.created(location).build();
     }
 
-    @PutMapping("/medicalRecord/{firstName}_{lastName}")
+    @PutMapping("/medicalRecord")
     public ResponseEntity<MedicalRecord> updateMedicalRecord(
-            @PathVariable
+            @RequestParam(value = "firstName")
             final String firstName,
-            @PathVariable
+            @RequestParam(value = "lastName")
             final String lastName,
             @Valid
             @RequestBody
@@ -65,30 +66,28 @@ public class MedicalRecordController {
 
         MedicalRecord medicalRecordToUpdate = medicalRecordService.findByFirstNameAndLastName(
                 firstName, lastName);
+        MedicalRecord medicalRecordUpdated = medicalRecordService.updateMedicalRecord(
+                medicalRecord, medicalRecordToUpdate);
+        MedicalRecord medicalRecordSaved = medicalRecordService.save(
+                medicalRecordUpdated);
 
-        medicalRecordToUpdate.setBirthDate(medicalRecord.getBirthDate());
-        medicalRecordToUpdate.setMedications(medicalRecord.getMedications());
-        medicalRecordToUpdate.setAllergies(medicalRecord.getAllergies());
-
-        final MedicalRecord medicalRecordUpdated = medicalRecordService.save(
-                medicalRecordToUpdate);
         LOGGER.info("MedicalRecordController -> Medical record successfully "
                 + "updated: " + medicalRecordUpdated.toString());
-        return ResponseEntity.ok(medicalRecordUpdated);
+        return ResponseEntity.ok(medicalRecordSaved);
 
     }
 
-    @DeleteMapping("/medicalRecord/{firstName}_{lastName}")
+    @DeleteMapping("/medicalRecord")
     public ResponseEntity<Void> deleteMedicalRecord(
-            @PathVariable
-                    String firstName,
-            @PathVariable
-                    String lastName) {
+            @RequestParam(value = "firstName")
+            final String firstName,
+            @RequestParam(value = "lastName")
+            final String lastName) {
         MedicalRecord medicalRecordToDelete = medicalRecordService.findByFirstNameAndLastName(
                 firstName, lastName);
         medicalRecordService.deleteMedicalRecord(medicalRecordToDelete);
-        LOGGER.info("MedicalRecordController -> Medical record successfully "
-                + "deleted: " + medicalRecordToDelete.toString());
+        LOGGER.info("MedicalRecordController -> Med: "
+                + medicalRecordToDelete.toString());
         return ResponseEntity.ok().build();
 
     }

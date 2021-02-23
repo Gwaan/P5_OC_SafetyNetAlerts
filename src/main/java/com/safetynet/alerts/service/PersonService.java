@@ -53,5 +53,15 @@ public class PersonService {
         personRepository.delete(person);
     }
 
+    public Person updatePerson(Person personBody, Person personToUpdate) {
+        personToUpdate.setAddress(personBody.getAddress());
+        personToUpdate.setCity(personBody.getCity());
+        personToUpdate.setEmail(personBody.getEmail());
+        personToUpdate.setPhone(personBody.getPhone());
+        personToUpdate.setZip(personBody.getZip());
+
+        return personToUpdate;
+    }
+
 
 }

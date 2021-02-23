@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
@@ -34,14 +35,19 @@ public class PersonController {
     }
 
     @GetMapping("/person/{firstName}_{lastName}")
-    public Person getPerson(@PathVariable final String firstName,
-            @PathVariable final String lastName) {
+    public Person getPerson(
+            @PathVariable
+            final String firstName,
+            @PathVariable
+            final String lastName) {
         return personService.findByFirstNameAndLastName(firstName, lastName);
     }
 
     @PostMapping("/person")
     public ResponseEntity<Void> addPerson(
-            @Valid @RequestBody final Person person) {
+            @Valid
+            @RequestBody
+            final Person person) {
         Person personToSave = personService.save(person);
 
         if (personToSave == null) {
@@ -52,36 +58,39 @@ public class PersonController {
                 .path("/{id}")
                 .buildAndExpand(personToSave.getId())
                 .toUri();
-        LOGGER.info("PersonController -> Person successfully added: "
-                + personToSave.toString());
+        LOGGER.info(
+                "PersonController -> Person successfully added: " + personToSave
+                        .toString());
         return ResponseEntity.created(location).build();
     }
 
-    @PutMapping("/person/{firstName}_{lastName}")
+    @PutMapping("/person")
     public ResponseEntity<Person> updatePerson(
-            @PathVariable final String firstName,
-            @PathVariable final String lastName,
-            @Valid @RequestBody final Person person) {
+            @RequestParam(value = "firstName")
+            final String firstName,
+            @RequestParam(value = "lastName")
+            final String lastName,
+            @Valid
+            @RequestBody
+            final Person person) {
 
         Person personToUpdate = personService.findByFirstNameAndLastName(
                 firstName, lastName);
-
-        personToUpdate.setAddress(person.getAddress());
-        personToUpdate.setCity(person.getCity());
-        personToUpdate.setEmail(person.getEmail());
-        personToUpdate.setPhone(person.getPhone());
-        personToUpdate.setZip(person.getZip());
-
-        final Person personUpdated = personService.save(personToUpdate);
+        Person personUpdated = personService.updatePerson(person,
+                personToUpdate);
+        final Person personSaved = personService.save(personToUpdate);
         LOGGER.info("PersonController -> Successfully updated person: "
                 + personUpdated.toString());
-        return ResponseEntity.ok(personUpdated);
+        return ResponseEntity.ok(personSaved);
 
     }
 
-    @DeleteMapping("/person/{firstName}_{lastName}")
-    public ResponseEntity<Void> deletePerson(@PathVariable String firstName,
-            @PathVariable String lastName) {
+    @DeleteMapping("/person")
+    public ResponseEntity<Void> deletePerson(
+            @RequestParam(value = "firstName")
+            final String firstName,
+            @RequestParam(value = "lastName")
+            final String lastName) {
         Person personToDelete = personService.findByFirstNameAndLastName(
                 firstName, lastName);
         personService.deletePerson(personToDelete);
