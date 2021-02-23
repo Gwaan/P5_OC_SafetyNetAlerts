@@ -10,7 +10,7 @@
     </Appenders>
 
     <Loggers>
-        <Logger name="com.safetynet.alerts" level="info"/>
+        <Logger name="com.safetynet.alerts" level="debug"/>
         <Root level="error">
             <AppenderRef ref="Console"/>
         </Root>

@@ -1,7 +1,6 @@
 package com.safetynet.alerts.controller;
 
 import com.safetynet.alerts.model.MedicalRecord;
-import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.service.MedicalRecordService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,7 +33,9 @@ public class MedicalRecordController {
 
     @PostMapping("/medicalRecord")
     public ResponseEntity<Void> addPerson(
-            @Valid @RequestBody final MedicalRecord medicalRecord) {
+            @Valid
+            @RequestBody
+            final MedicalRecord medicalRecord) {
         MedicalRecord medicalRecordToSave = medicalRecordService.save(
                 medicalRecord);
 
@@ -47,16 +48,20 @@ public class MedicalRecordController {
                 .buildAndExpand(medicalRecordToSave.getId())
                 .toUri();
         LOGGER.info(
-                "MedicalRecordController -> Successfully add medical record: "
+                "MedicalRecordController -> Medical record successfully added: "
                         + medicalRecordToSave.toString());
         return ResponseEntity.created(location).build();
     }
 
     @PutMapping("/medicalRecord/{firstName}_{lastName}")
     public ResponseEntity<MedicalRecord> updateMedicalRecord(
-            @PathVariable final String firstName,
-            @PathVariable final String lastName,
-            @Valid @RequestBody final MedicalRecord medicalRecord) {
+            @PathVariable
+            final String firstName,
+            @PathVariable
+            final String lastName,
+            @Valid
+            @RequestBody
+            final MedicalRecord medicalRecord) {
 
         MedicalRecord medicalRecordToUpdate = medicalRecordService.findByFirstNameAndLastName(
                 firstName, lastName);
@@ -67,22 +72,23 @@ public class MedicalRecordController {
 
         final MedicalRecord medicalRecordUpdated = medicalRecordService.save(
                 medicalRecordToUpdate);
-        LOGGER.info(
-                "MedicalRecordController -> Successfully updated medical record: "
-                        + medicalRecordUpdated.toString());
+        LOGGER.info("MedicalRecordController -> Medical record successfully "
+                + "updated: " + medicalRecordUpdated.toString());
         return ResponseEntity.ok(medicalRecordUpdated);
 
     }
 
     @DeleteMapping("/medicalRecord/{firstName}_{lastName}")
     public ResponseEntity<Void> deleteMedicalRecord(
-            @PathVariable String firstName, @PathVariable String lastName) {
+            @PathVariable
+                    String firstName,
+            @PathVariable
+                    String lastName) {
         MedicalRecord medicalRecordToDelete = medicalRecordService.findByFirstNameAndLastName(
                 firstName, lastName);
         medicalRecordService.deleteMedicalRecord(medicalRecordToDelete);
-        LOGGER.info(
-                "MedicalRecordController -> Successfully deleted medical record: "
-                        + medicalRecordToDelete.toString());
+        LOGGER.info("MedicalRecordController -> Medical record successfully "
+                + "deleted: " + medicalRecordToDelete.toString());
         return ResponseEntity.ok().build();
 
     }

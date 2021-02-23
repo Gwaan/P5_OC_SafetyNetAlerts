@@ -13,6 +13,7 @@ import com.safetynet.alerts.service.PersonService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.FileInputStream;
@@ -52,7 +53,7 @@ public class JsonReader {
             personService.saveAll(persons);
             firestationService.saveAll(fireStations);
             medicalRecordService.saveAll(medicalRecords);
-            LOGGER.info("data.json successfully read and saved in db");
+            LOGGER.debug("data.json successfully read and saved in db");
 
         } catch (FileNotFoundException e) {
             LOGGER.error("File data.json not found");

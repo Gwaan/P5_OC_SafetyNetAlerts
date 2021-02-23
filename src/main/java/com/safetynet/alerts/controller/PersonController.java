@@ -52,7 +52,7 @@ public class PersonController {
                 .path("/{id}")
                 .buildAndExpand(personToSave.getId())
                 .toUri();
-        LOGGER.info("PersonController -> Successfully add person: "
+        LOGGER.info("PersonController -> Person successfully added: "
                 + personToSave.toString());
         return ResponseEntity.created(location).build();
     }

@@ -2,7 +2,6 @@ package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.exceptions.NotFoundException;
 import com.safetynet.alerts.model.MedicalRecord;
-import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.repository.MedicalRecordRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
