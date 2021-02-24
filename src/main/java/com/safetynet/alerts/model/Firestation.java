@@ -1,6 +1,7 @@
 package com.safetynet.alerts.model;
 
 import lombok.Data;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
 @Entity
@@ -20,9 +23,11 @@ public class Firestation {
     @Column(name = "id")
     private Long id;
 
+    @NotNull(message = "Station number cannot be empty")
     @Column(name = "station")
-    private Byte station;
+    private Integer station;
 
+    @NotBlank(message = "Addresse field cannot be empty")
     @Column(name = "address")
     private String address;
 

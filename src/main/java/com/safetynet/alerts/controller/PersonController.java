@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 import javax.validation.Valid;
 import java.net.URI;
 
@@ -36,18 +37,15 @@ public class PersonController {
 
     @GetMapping("/person/{firstName}_{lastName}")
     public Person getPerson(
-            @PathVariable
-            final String firstName,
-            @PathVariable
-            final String lastName) {
+            @PathVariable final String firstName,
+            @PathVariable final String lastName) {
         return personService.findByFirstNameAndLastName(firstName, lastName);
     }
 
     @PostMapping("/person")
     public ResponseEntity<Void> addPerson(
             @Valid
-            @RequestBody
-            final Person person) {
+            @RequestBody final Person person) {
         Person personToSave = personService.save(person);
 
         if (personToSave == null) {
@@ -66,13 +64,10 @@ public class PersonController {
 
     @PutMapping("/person")
     public ResponseEntity<Person> updatePerson(
-            @RequestParam(value = "firstName")
-            final String firstName,
-            @RequestParam(value = "lastName")
-            final String lastName,
+            @RequestParam(value = "firstName") final String firstName,
+            @RequestParam(value = "lastName") final String lastName,
             @Valid
-            @RequestBody
-            final Person person) {
+            @RequestBody final Person person) {
 
         Person personToUpdate = personService.findByFirstNameAndLastName(
                 firstName, lastName);
@@ -87,10 +82,8 @@ public class PersonController {
 
     @DeleteMapping("/person")
     public ResponseEntity<Void> deletePerson(
-            @RequestParam(value = "firstName")
-            final String firstName,
-            @RequestParam(value = "lastName")
-            final String lastName) {
+            @RequestParam(value = "firstName") final String firstName,
+            @RequestParam(value = "lastName") final String lastName) {
         Person personToDelete = personService.findByFirstNameAndLastName(
                 firstName, lastName);
         personService.deletePerson(personToDelete);

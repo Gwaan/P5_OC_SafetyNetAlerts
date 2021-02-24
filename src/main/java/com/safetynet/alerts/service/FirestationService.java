@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
@@ -32,8 +33,12 @@ public class FirestationService {
         return fireStationRepository.saveAll(firestations);
     }
 
+    public void deleteFirestation(Firestation firestation) {
+        fireStationRepository.delete(firestation);
+    }
+
     public Iterable<Person> findPersonsWithStationNumber(
-            final byte stationNumber) {
+            final int stationNumber) {
         List<Person> person = (List<Person>) fireStationRepository.findPersonsWithStationNumber(
                 stationNumber);
 
@@ -50,4 +55,23 @@ public class FirestationService {
         return person;
     }
 
+    public Firestation findFirestationByAddressAndStation(String address, int station) {
+        LOGGER.debug("FirestationService -> Searching for fire station n° " + station + " at address: "
+                + address + " ...");
+        Firestation firestation = fireStationRepository.findByAddressAndStation(address, station);
+        if (firestation == null) {
+            LOGGER.error("FirestationService -> Fire station n° " + station + " at address: " + address + " doesn't exist");
+            throw new NotFoundException("FirestationService -> Fire station n° " + station + " at address: " + address + " doesn't exist");
+        }
+        LOGGER.info("FirestationService -> Fire station n°  " + station + " at address: " + address
+                + " was found");
+        return firestation;
+    }
+
+    public Firestation updateFirestation(Firestation firestationBody, Firestation firestationToUpdate) {
+        firestationToUpdate.setAddress(firestationBody.getAddress());
+        firestationToUpdate.setStation(firestationBody.getStation());
+
+        return firestationToUpdate;
+    }
 }
