@@ -12,11 +12,7 @@ public interface FirestationRepository extends CrudRepository<Firestation, Long>
 
     Firestation findByAddressAndStation(String address, int station);
 
-    @Query(value = "SELECT new com.safetynet.alerts.model.Person"
-            + "(p.firstName,p.lastName,p.address,p.city,p.zip, p.phone) "
-            + "FROM Person p, Firestation f WHERE f.station = :stationNumber"
-            + " AND p.address = f.address")
-    Iterable<Person> findPersonsWithStationNumber(int stationNumber);
+
 
     boolean existsFirestationByAddressAndStation(String address, int station);
 

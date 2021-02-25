@@ -1,8 +1,10 @@
 package com.safetynet.alerts.controller;
 
 import com.safetynet.alerts.model.Firestation;
-import com.safetynet.alerts.model.Person;
+import com.safetynet.alerts.model.dto.CountAndPersonsCoveredDTO;
+import com.safetynet.alerts.model.dto.PersonsCoveredByStationDTO;
 import com.safetynet.alerts.service.FirestationService;
+import com.safetynet.alerts.service.PersonsCoveredByStationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,16 +24,20 @@ public class FirestationController {
     @Autowired
     FirestationService firestationService;
 
+    @Autowired
+    PersonsCoveredByStationService personsCoveredByStationService;
+
 
     @GetMapping("/firestation")
-    public Iterable<Person> getPersonsCoveredByStationId(
+    public CountAndPersonsCoveredDTO getPersonsCoveredByStationId(
             @RequestParam(value = "stationNumber")
             final int stationNumber) {
         LOGGER.info(
                 "FireStationController (GET) -> Getting all persons covered "
-                        + "by station number: "
-                        + stationNumber);
-        return firestationService.findPersonsWithStationNumber(stationNumber);
+                        + "by station number: " + stationNumber);
+        return personsCoveredByStationService.findPersonsWithStationNumber(
+                stationNumber);
+
     }
 
     @PostMapping("/firestation")
@@ -50,8 +56,7 @@ public class FirestationController {
                 .buildAndExpand(firestationToSave.getId())
                 .toUri();
         LOGGER.info("FireStationController (POST) -> Fire station "
-                + "successfully added: "
-                + firestationToSave.toString());
+                + "successfully added: " + firestationToSave.toString());
         return ResponseEntity.created(location).build();
     }
 
@@ -87,10 +92,8 @@ public class FirestationController {
         Firestation firestationToDelete = firestationService.findFirestationByAddressAndStation(
                 address, station);
         firestationService.deleteFirestation(firestationToDelete);
-        LOGGER.info(
-                "FirestationController (DEL) -> Successfully deleted fire "
-                        + "station: "
-                        + firestationToDelete.toString());
+        LOGGER.info("FirestationController (DEL) -> Successfully deleted fire "
+                + "station: " + firestationToDelete.toString());
         return ResponseEntity.ok().build();
 
     }

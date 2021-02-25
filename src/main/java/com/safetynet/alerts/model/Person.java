@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @Entity
 @Table(name = "persons")
-@JsonInclude(JsonInclude.Include.NON_NULL)
+//@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Person {
 
     public Person() {
