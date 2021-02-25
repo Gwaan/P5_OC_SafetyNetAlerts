@@ -9,8 +9,7 @@ import java.util.Date;
 @Repository
 public interface PersonsCoveredByStationRepository extends CrudRepository<Person, Long> {
 
-    @Query(value = "SELECT new com.safetynet.alerts.model.Person"
-            + "(p.firstName,p.lastName,p.address,p.city,p.zip, p.phone) "
+    @Query(value = "SELECT p "
             + "FROM Person p, Firestation f WHERE f.station = :stationNumber"
             + " AND p.address = f.address")
     Iterable<Person> findPersonsWithStationNumber(int stationNumber);

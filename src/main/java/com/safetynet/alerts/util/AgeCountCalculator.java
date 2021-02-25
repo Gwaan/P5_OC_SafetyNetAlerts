@@ -20,7 +20,7 @@ public class AgeCountCalculator {
         }
     }
 
-    public LocalDate convertToLocalDateViaInstant(Date dateToConvert) {
+    public LocalDate convertToLocalDate(Date dateToConvert) {
         return dateToConvert
                 .toInstant()
                 .atZone(ZoneId.systemDefault())

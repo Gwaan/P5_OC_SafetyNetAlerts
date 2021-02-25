@@ -1,6 +1,7 @@
 package com.safetynet.alerts.repository;
 
 import com.safetynet.alerts.model.Person;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,5 +12,7 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
 
     boolean existsPersonByFirstNameAndLastName(String firstName,
             String lastName);
+
+    Iterable<Person> findPersonByAddress(String address);
 
 }

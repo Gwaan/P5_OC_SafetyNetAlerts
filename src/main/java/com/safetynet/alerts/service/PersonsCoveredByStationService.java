@@ -39,7 +39,7 @@ public class PersonsCoveredByStationService {
                     "No address is covered by the station n°: "
                             + stationNumber);
         }
-        LOGGER.info("PersonsCoveredByStationRepository  -> " + persons.size()
+        LOGGER.info("PersonsCoveredByStationService  -> " + persons.size()
                 + " persons found.");
         return personMapping.convertToCountAndPersonsCoveredDTO(persons);
     }

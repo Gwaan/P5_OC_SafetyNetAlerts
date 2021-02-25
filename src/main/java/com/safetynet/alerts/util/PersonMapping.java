@@ -31,7 +31,7 @@ public class PersonMapping {
             persDto.setZip(person.getZip());
             persDto.setPhone(person.getPhone());
             persDto.setAge(ageCountCalculator.calculateAge(
-                    ageCountCalculator.convertToLocalDateViaInstant(
+                    ageCountCalculator.convertToLocalDate(
                             personsCoveredByStationService.findDateByFirstNameAndLastName(
                                     person.getFirstName(),
                                     person.getLastName()))));
