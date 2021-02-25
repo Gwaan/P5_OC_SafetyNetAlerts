@@ -1,14 +1,13 @@
 package com.safetynet.alerts.service;
 
-import com.safetynet.alerts.controller.ChildAlertController;
-import com.safetynet.alerts.controller.PersonController;
 import com.safetynet.alerts.exceptions.AlreadyExistingException;
 import com.safetynet.alerts.exceptions.NotFoundException;
 import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.model.dto.ChildAlertDTO;
+import com.safetynet.alerts.model.dto.PersonsCoveredByStationDTO;
 import com.safetynet.alerts.repository.PersonRepository;
-import com.safetynet.alerts.repository.PersonsCoveredByStationRepository;
 import com.safetynet.alerts.util.AgeCountCalculator;
+import com.safetynet.alerts.util.PersonMapping;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +26,9 @@ public class PersonService {
 
     @Autowired
     private PersonsCoveredByStationService personsCoveredByStationService;
+
+    @Autowired
+    private PersonMapping personMapping;
 
     private static final Logger LOGGER = LogManager.getLogger(
             PersonService.class);
@@ -96,7 +98,7 @@ public class PersonService {
                 lastName);
     }
 
-    public ChildAlertDTO findPersonByAddress(String address) {
+    public List<Person> findPersonByAddress(String address) {
         List<Person> personsByAddress = (List<Person>) personRepository.findPersonByAddress(
                 address);
         LOGGER.debug(
@@ -107,14 +109,23 @@ public class PersonService {
             throw new NotFoundException(
                     "PersonService -> No person found at address: " + address);
         }
-        return sortChildrenAndAdults(personsByAddress);
+        return personsByAddress;
     }
 
-    public ChildAlertDTO sortChildrenAndAdults(List<Person> personsByAddress) {
+    public List<Person> findPersonsByAddresses(List<String> addresses) {
+        return (List<Person>) personRepository.findPersonByAddress(addresses);
+    }
+
+    //TODO: rename method
+    public ChildAlertDTO sortChildrenAndAdults(String address) {
+        List<Person> personsByAddress = (List<Person>) findPersonByAddress(
+                address);
+        List<PersonsCoveredByStationDTO> personsCoveredByStationDTOS = personMapping
+                .convertToPersonsCoveredByStationDto(personsByAddress);
         ChildAlertDTO childAlertDTO = new ChildAlertDTO();
-        List<Person> adults = new ArrayList<>();
-        List<Person> children = new ArrayList<>();
-        for (Person person : personsByAddress) {
+        List<PersonsCoveredByStationDTO> adults = new ArrayList<>();
+        List<PersonsCoveredByStationDTO> children = new ArrayList<>();
+        for (PersonsCoveredByStationDTO person : personsCoveredByStationDTOS) {
 
             int age = ageCountCalculator.calculateAge(
                     ageCountCalculator.convertToLocalDate(
@@ -135,7 +146,17 @@ public class PersonService {
         LOGGER.info("PersonService -> " + adults.size() + " adult(s) found / "
                 + children.size() + " children found");
 
-        return childAlertDTO;
+        if (childAlertDTO.getChildren().isEmpty())
+            return null;
+        else {
+            return childAlertDTO;
+        }
+    }
+    //TODO: refactor code
+
+    public Iterable<Person> findHouseholdCoveredByStation(
+            List<Integer> stations) {
+        return personRepository.findHouseholdCoveredByStation(stations);
     }
 
 

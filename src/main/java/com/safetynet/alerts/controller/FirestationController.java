@@ -2,7 +2,6 @@ package com.safetynet.alerts.controller;
 
 import com.safetynet.alerts.model.Firestation;
 import com.safetynet.alerts.model.dto.CountAndPersonsCoveredDTO;
-import com.safetynet.alerts.model.dto.PersonsCoveredByStationDTO;
 import com.safetynet.alerts.service.FirestationService;
 import com.safetynet.alerts.service.PersonsCoveredByStationService;
 import org.apache.logging.log4j.LogManager;

@@ -13,7 +13,9 @@ public interface FirestationRepository extends CrudRepository<Firestation, Long>
     Firestation findByAddressAndStation(String address, int station);
 
 
-
     boolean existsFirestationByAddressAndStation(String address, int station);
+
+    @Query("SELECT f.address FROM Firestation f WHERE f.station = :station")
+    Iterable<String> findAddressesByStation(int station);
 
 }

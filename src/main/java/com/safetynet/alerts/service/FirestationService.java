@@ -73,6 +73,10 @@ public class FirestationService {
         return firestation;
     }
 
+    public Iterable<String> findByStation(int station) {
+        return fireStationRepository.findAddressesByStation(station);
+    }
+
     public Firestation updateFirestation(Firestation firestationBody,
             Firestation firestationToUpdate) {
         firestationToUpdate.setAddress(firestationBody.getAddress());

@@ -1,6 +1,5 @@
 package com.safetynet.alerts.controller;
 
-import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.model.dto.ChildAlertDTO;
 import com.safetynet.alerts.service.PersonService;
 import org.apache.logging.log4j.LogManager;
@@ -21,11 +20,11 @@ public class ChildAlertController {
 
     @GetMapping("/childAlert")
     public ChildAlertDTO getChildAtAddress(
-            @RequestParam(value = "address")
-                    String address) {
+            @RequestParam(value="address")
+            final String address) {
         LOGGER.info("ChildAlertController (GET) -> Getting all persons "
                 + "covered by address: " + address);
-        return personService.findPersonByAddress(address);
+        return personService.sortChildrenAndAdults(address);
     }
 
 }
