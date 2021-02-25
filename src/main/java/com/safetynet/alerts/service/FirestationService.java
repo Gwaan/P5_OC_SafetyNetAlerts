@@ -53,23 +53,6 @@ public class FirestationService {
         fireStationRepository.delete(firestation);
     }
 
-    public Iterable<Person> findPersonsWithStationNumber(
-            final int stationNumber) {
-        List<Person> person = (List<Person>) fireStationRepository.findPersonsWithStationNumber(
-                stationNumber);
-
-        if (person.isEmpty()) {
-            LOGGER.error(
-                    "FireStationService -> No address is covered by the station n°: "
-                            + stationNumber);
-            throw new NotFoundException(
-                    "No address is covered by the station n°: "
-                            + stationNumber);
-        }
-        LOGGER.info(
-                "FireStationService -> " + person.size() + " persons found.");
-        return person;
-    }
 
     public Firestation findFirestationByAddressAndStation(String address,
             int station) {
