@@ -1,5 +1,6 @@
 package com.safetynet.alerts.service;
 
+import com.safetynet.alerts.exceptions.AlreadyExistingException;
 import com.safetynet.alerts.exceptions.NotFoundException;
 import com.safetynet.alerts.model.Firestation;
 import com.safetynet.alerts.model.Person;
@@ -26,6 +27,21 @@ public class FirestationService {
     }
 
     public Firestation save(Firestation firestation) {
+        if (existsFirestationByAddressAndStation(firestation.getAddress(),
+                firestation.getStation())) {
+            LOGGER.error("FirestationService -> Fire station number: "
+                    + firestation.getStation() + " at address: "
+                    + firestation.getAddress() + " is already existing");
+            throw new AlreadyExistingException(
+                    "FirestationService -> Fire station number: "
+                            + firestation.getStation() + " at address: "
+                            + firestation.getAddress()
+                            + " is already existing");
+        }
+        return fireStationRepository.save(firestation);
+    }
+
+    public Firestation saveUpdated(Firestation firestation) {
         return fireStationRepository.save(firestation);
     }
 
@@ -55,23 +71,36 @@ public class FirestationService {
         return person;
     }
 
-    public Firestation findFirestationByAddressAndStation(String address, int station) {
-        LOGGER.debug("FirestationService -> Searching for fire station n° " + station + " at address: "
-                + address + " ...");
-        Firestation firestation = fireStationRepository.findByAddressAndStation(address, station);
+    public Firestation findFirestationByAddressAndStation(String address,
+            int station) {
+        LOGGER.debug(
+                "FirestationService -> Searching for fire station n° " + station
+                        + " at address: " + address + " ...");
+        Firestation firestation = fireStationRepository.findByAddressAndStation(
+                address, station);
         if (firestation == null) {
-            LOGGER.error("FirestationService -> Fire station n° " + station + " at address: " + address + " doesn't exist");
-            throw new NotFoundException("FirestationService -> Fire station n° " + station + " at address: " + address + " doesn't exist");
+            LOGGER.error("FirestationService -> Fire station n° " + station
+                    + " at address: " + address + " doesn't exist");
+            throw new NotFoundException(
+                    "FirestationService -> Fire station n° " + station
+                            + " at address: " + address + " doesn't exist");
         }
-        LOGGER.info("FirestationService -> Fire station n°  " + station + " at address: " + address
-                + " was found");
+        LOGGER.info("FirestationService -> Fire station n°  " + station
+                + " at address: " + address + " was found");
         return firestation;
     }
 
-    public Firestation updateFirestation(Firestation firestationBody, Firestation firestationToUpdate) {
+    public Firestation updateFirestation(Firestation firestationBody,
+            Firestation firestationToUpdate) {
         firestationToUpdate.setAddress(firestationBody.getAddress());
         firestationToUpdate.setStation(firestationBody.getStation());
 
         return firestationToUpdate;
+    }
+
+    public boolean existsFirestationByAddressAndStation(String address,
+            int station) {
+        return fireStationRepository.existsFirestationByAddressAndStation(
+                address, station);
     }
 }

@@ -31,21 +31,24 @@ public class PersonController {
 
     @GetMapping("/person")
     public Iterable<Person> getPersons() {
-        LOGGER.info("PersonController -> Get all persons ");
+        LOGGER.info("PersonController (GET) -> Get all persons ");
         return personService.findAll();
     }
 
     @GetMapping("/person/{firstName}_{lastName}")
     public Person getPerson(
-            @PathVariable final String firstName,
-            @PathVariable final String lastName) {
+            @PathVariable
+            final String firstName,
+            @PathVariable
+            final String lastName) {
         return personService.findByFirstNameAndLastName(firstName, lastName);
     }
 
     @PostMapping("/person")
     public ResponseEntity<Void> addPerson(
             @Valid
-            @RequestBody final Person person) {
+            @RequestBody
+            final Person person) {
         Person personToSave = personService.save(person);
 
         if (personToSave == null) {
@@ -57,24 +60,27 @@ public class PersonController {
                 .buildAndExpand(personToSave.getId())
                 .toUri();
         LOGGER.info(
-                "PersonController -> Person successfully added: " + personToSave
+                "PersonController (POST) -> Person successfully added: " + personToSave
                         .toString());
         return ResponseEntity.created(location).build();
     }
 
     @PutMapping("/person")
     public ResponseEntity<Person> updatePerson(
-            @RequestParam(value = "firstName") final String firstName,
-            @RequestParam(value = "lastName") final String lastName,
+            @RequestParam(value = "firstName")
+            final String firstName,
+            @RequestParam(value = "lastName")
+            final String lastName,
             @Valid
-            @RequestBody final Person person) {
+            @RequestBody
+            final Person person) {
 
         Person personToUpdate = personService.findByFirstNameAndLastName(
                 firstName, lastName);
         Person personUpdated = personService.updatePerson(person,
                 personToUpdate);
-        final Person personSaved = personService.save(personToUpdate);
-        LOGGER.info("PersonController -> Successfully updated person: "
+        final Person personSaved = personService.saveUpdated(personToUpdate);
+        LOGGER.info("PersonController (PUT) -> Successfully updated person: "
                 + personUpdated.toString());
         return ResponseEntity.ok(personSaved);
 
@@ -82,12 +88,14 @@ public class PersonController {
 
     @DeleteMapping("/person")
     public ResponseEntity<Void> deletePerson(
-            @RequestParam(value = "firstName") final String firstName,
-            @RequestParam(value = "lastName") final String lastName) {
+            @RequestParam(value = "firstName")
+            final String firstName,
+            @RequestParam(value = "lastName")
+            final String lastName) {
         Person personToDelete = personService.findByFirstNameAndLastName(
                 firstName, lastName);
         personService.deletePerson(personToDelete);
-        LOGGER.info("PersonController -> Successfully deleted person: "
+        LOGGER.info("PersonController (DEL) -> Successfully deleted person: "
                 + personToDelete.toString());
         return ResponseEntity.ok().build();
 

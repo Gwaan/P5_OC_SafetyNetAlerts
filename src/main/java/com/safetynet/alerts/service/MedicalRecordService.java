@@ -1,5 +1,6 @@
 package com.safetynet.alerts.service;
 
+import com.safetynet.alerts.exceptions.AlreadyExistingException;
 import com.safetynet.alerts.exceptions.NotFoundException;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.repository.MedicalRecordRepository;
@@ -21,6 +22,20 @@ public class MedicalRecordService {
     }
 
     public MedicalRecord save(MedicalRecord medicalRecord) {
+        if (existsMedicalRecordByFirstNameAndLastName(
+                medicalRecord.getFirstName(), medicalRecord.getLastName())) {
+            LOGGER.error("MedicalRecordService -> Medical record for: "
+                    + medicalRecord.getFirstName() + " "
+                    + medicalRecord.getLastName() + " is already existing");
+            throw new AlreadyExistingException(
+                    "MedicalRecordService -> Medical record for: "
+                            + medicalRecord.getFirstName() + " " + medicalRecord
+                            .getLastName() + " is already existing.");
+        }
+        return medicalRecordRepository.save(medicalRecord);
+    }
+
+    public MedicalRecord saveUpdated(MedicalRecord medicalRecord) {
         return medicalRecordRepository.save(medicalRecord);
     }
 
@@ -60,5 +75,12 @@ public class MedicalRecordService {
 
         return medicalRecordUpdated;
     }
+
+    public boolean existsMedicalRecordByFirstNameAndLastName(String firstName,
+            String lastName) {
+        return medicalRecordRepository.existsMedicalRecordByFirstNameAndLastName(
+                firstName, lastName);
+    }
+
 
 }

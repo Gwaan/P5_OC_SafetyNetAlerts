@@ -18,4 +18,6 @@ public interface FirestationRepository extends CrudRepository<Firestation, Long>
             + " AND p.address = f.address")
     Iterable<Person> findPersonsWithStationNumber(int stationNumber);
 
+    boolean existsFirestationByAddressAndStation(String address, int station);
+
 }

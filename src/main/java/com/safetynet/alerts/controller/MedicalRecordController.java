@@ -49,7 +49,8 @@ public class MedicalRecordController {
                 .buildAndExpand(medicalRecordToSave.getId())
                 .toUri();
         LOGGER.info(
-                "MedicalRecordController -> Medical record successfully added: "
+                "MedicalRecordController (POST) -> Medical record "
+                        + "successfully added: "
                         + medicalRecordToSave.toString());
         return ResponseEntity.created(location).build();
     }
@@ -68,10 +69,11 @@ public class MedicalRecordController {
                 firstName, lastName);
         MedicalRecord medicalRecordUpdated = medicalRecordService.updateMedicalRecord(
                 medicalRecord, medicalRecordToUpdate);
-        MedicalRecord medicalRecordSaved = medicalRecordService.save(
+        MedicalRecord medicalRecordSaved = medicalRecordService.saveUpdated(
                 medicalRecordUpdated);
 
-        LOGGER.info("MedicalRecordController -> Medical record successfully "
+        LOGGER.info("MedicalRecordController (PUT) -> Medical record "
+                + "successfully "
                 + "updated: " + medicalRecordUpdated.toString());
         return ResponseEntity.ok(medicalRecordSaved);
 
@@ -86,7 +88,7 @@ public class MedicalRecordController {
         MedicalRecord medicalRecordToDelete = medicalRecordService.findByFirstNameAndLastName(
                 firstName, lastName);
         medicalRecordService.deleteMedicalRecord(medicalRecordToDelete);
-        LOGGER.info("MedicalRecordController -> Med: "
+        LOGGER.info("MedicalRecordController (DEL) -> Med: "
                 + medicalRecordToDelete.toString());
         return ResponseEntity.ok().build();
 

@@ -9,4 +9,7 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
 
     Person findByFirstNameAndLastName(String firstName, String lastName);
 
+    boolean existsPersonByFirstNameAndLastName(String firstName,
+            String lastName);
+
 }

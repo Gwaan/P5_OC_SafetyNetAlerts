@@ -1,6 +1,7 @@
 package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.controller.PersonController;
+import com.safetynet.alerts.exceptions.AlreadyExistingException;
 import com.safetynet.alerts.exceptions.NotFoundException;
 import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.repository.PersonRepository;
@@ -24,6 +25,20 @@ public class PersonService {
     }
 
     public Person save(Person person) {
+        if (existsPersonByFirstNameAndLastName(person.getFirstName(),
+                person.getLastName())) {
+            LOGGER.error(
+                    "PersonService -> Person " + person.getFirstName() + " "
+                            + person.getLastName() + " is already existing");
+            throw new AlreadyExistingException(
+                    "PersonService -> Person: " + person.getFirstName() + " "
+                            + person.getLastName() + " is already existing.");
+        }
+
+        return personRepository.save(person);
+    }
+
+    public Person saveUpdated(Person person) {
         return personRepository.save(person);
     }
 
@@ -61,6 +76,12 @@ public class PersonService {
         personToUpdate.setZip(personBody.getZip());
 
         return personToUpdate;
+    }
+
+    public boolean existsPersonByFirstNameAndLastName(String firstName,
+            String lastName) {
+        return personRepository.existsPersonByFirstNameAndLastName(firstName,
+                lastName);
     }
 
 
