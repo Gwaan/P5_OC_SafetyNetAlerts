@@ -19,7 +19,6 @@ public class PersonsCoveredByStationDTO {
 
     private String phone;
 
-    @JsonIgnore
     private int age;
 
 }

@@ -1,6 +1,7 @@
 package com.safetynet.alerts.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import javax.persistence.Column;
@@ -20,6 +21,7 @@ public class MedicalRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @JsonIgnore
     private Long id;
 
     @Column(name = "first_name")

@@ -1,20 +1,35 @@
 package com.safetynet.alerts.service;
 
-import com.safetynet.alerts.controller.PersonController;
 import com.safetynet.alerts.exceptions.AlreadyExistingException;
 import com.safetynet.alerts.exceptions.NotFoundException;
 import com.safetynet.alerts.model.Person;
+import com.safetynet.alerts.model.dto.ChildAlertDTO;
+import com.safetynet.alerts.model.dto.FloodDTO;
+import com.safetynet.alerts.model.dto.PersonsCoveredByStationDTO;
 import com.safetynet.alerts.repository.PersonRepository;
+import com.safetynet.alerts.util.AgeCountCalculator;
+import com.safetynet.alerts.util.PersonMapping;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class PersonService {
 
     @Autowired
     private PersonRepository personRepository;
+
+    @Autowired
+    private AgeCountCalculator ageCountCalculator;
+
+    @Autowired
+    private PersonsCoveredByStationService personsCoveredByStationService;
+
+    @Autowired
+    private PersonMapping personMapping;
 
     private static final Logger LOGGER = LogManager.getLogger(
             PersonService.class);
@@ -82,6 +97,88 @@ public class PersonService {
             String lastName) {
         return personRepository.existsPersonByFirstNameAndLastName(firstName,
                 lastName);
+    }
+
+    public List<Person> findPersonByAddress(String address) {
+        List<Person> personsByAddress = (List<Person>) personRepository.findPersonByAddress(
+                address);
+        LOGGER.debug(
+                "PersonService -> Searching for person at address: " + address);
+        if (personsByAddress.isEmpty()) {
+            LOGGER.error(
+                    "PersonService -> No person found at address: " + address);
+            throw new NotFoundException(
+                    "PersonService -> No person found at address: " + address);
+        }
+        return personsByAddress;
+    }
+
+    public List<Person> findPersonsByAddresses(List<String> addresses) {
+        return (List<Person>) personRepository.findPersonByAddress(addresses);
+    }
+
+    //TODO: rename method
+    public ChildAlertDTO getChildAlertDtoSorted(String address) {
+        List<Person> personsByAddress = findPersonByAddress(address);
+        List<PersonsCoveredByStationDTO> personsCoveredByStationDTOS = personMapping
+                .convertToPersonsCoveredByStationDto(personsByAddress);
+        ChildAlertDTO childAlertDTO = new ChildAlertDTO();
+        List<PersonsCoveredByStationDTO> adults = new ArrayList<>();
+        List<PersonsCoveredByStationDTO> children = new ArrayList<>();
+        for (PersonsCoveredByStationDTO person : personsCoveredByStationDTOS) {
+
+            int age = ageCountCalculator.calculateAge(
+                    ageCountCalculator.convertToLocalDate(
+                            personsCoveredByStationService.findDateByFirstNameAndLastName(
+                                    person.getFirstName(),
+                                    person.getLastName())));
+
+            if (age <= 18) {
+                children.add(person);
+            } else {
+                adults.add(person);
+            }
+
+        }
+        childAlertDTO.setAdults(adults);
+        childAlertDTO.setChildren(children);
+
+        LOGGER.info("PersonService -> " + adults.size() + " adult(s) found / "
+                + children.size() + " children found");
+
+        if (childAlertDTO.getChildren().isEmpty())
+            return null;
+        else {
+            return childAlertDTO;
+        }
+    }
+    //TODO: refactor code
+
+    /*public Iterable<Person> findHouseholdCoveredByStation(
+            List<Integer> stations) {
+        return personRepository.findHouseholdCoveredByStation(stations);
+    }*/
+
+    public List<FloodDTO> getFloodDtoByStation(List<Integer> stations) {
+        return personMapping.convertToFloodDto(stations);
+    }
+
+    public List<Person> getPhoneNumberByStation(int station) {
+        List<Person> personsPhoneNumber = (List<Person>) personRepository.findPhoneNumberByStation(
+                station);
+        LOGGER.debug(
+                "Searching for persons covered by station number: " + station);
+
+        if (personsPhoneNumber.isEmpty()) {
+            LOGGER.error(
+                    "PersonService -> No person covered by station: " + station
+                            + " found");
+            throw new NotFoundException(
+                    "PersonService -> No person covered by station: " + station
+                            + " found");
+        }
+        LOGGER.info(personsPhoneNumber.size() + " number(s) found");
+        return personsPhoneNumber;
     }
 
 

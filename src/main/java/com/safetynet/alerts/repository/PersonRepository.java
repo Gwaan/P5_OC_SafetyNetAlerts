@@ -1,8 +1,10 @@
 package com.safetynet.alerts.repository;
 
 import com.safetynet.alerts.model.Person;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+import java.util.List;
 
 @Repository
 public interface PersonRepository extends CrudRepository<Person, Long> {
@@ -11,5 +13,18 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
 
     boolean existsPersonByFirstNameAndLastName(String firstName,
             String lastName);
+
+    @Query(value = "SELECT p FROM Person p WHERE p.address = :address")
+    Iterable<Person> findPersonByAddress(String address);
+
+    @Query(value = "SELECT p FROM Person p WHERE p.address IN :addresses")
+    Iterable<Person> findPersonByAddress(List<String> addresses);
+
+
+    @Query(value = "SELECT new com.safetynet.alerts.model.Person(p.phone) FROM "
+            + "Person p, Firestation f WHERE f.station = :station AND p"
+            + ".address = f.address")
+    Iterable<Person> findPhoneNumberByStation(int station);
+
 
 }
