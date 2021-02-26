@@ -32,7 +32,7 @@ public class PersonInfoController {
 
         LOGGER.info("PersonInfoController (GET) -> Getting person infos for"
                 + firstName + " " + lastName);
-
-        return personMapping.convertToPersonInfoDto(personsList);
+        //TODO: call service instead of mapping
+        return personMapping.convertToPersonInfoDtoList(personsList);
     }
 }

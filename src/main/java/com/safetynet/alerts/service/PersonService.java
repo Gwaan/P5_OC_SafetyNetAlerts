@@ -4,6 +4,7 @@ import com.safetynet.alerts.exceptions.AlreadyExistingException;
 import com.safetynet.alerts.exceptions.NotFoundException;
 import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.model.dto.ChildAlertDTO;
+import com.safetynet.alerts.model.dto.CountAndPersonsCoveredDTO;
 import com.safetynet.alerts.model.dto.FloodDTO;
 import com.safetynet.alerts.model.dto.PersonFireDTO;
 import com.safetynet.alerts.model.dto.PersonsCoveredByStationDTO;
@@ -15,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -25,9 +27,6 @@ public class PersonService {
 
     @Autowired
     private AgeCountCalculator ageCountCalculator;
-
-    @Autowired
-    private PersonsCoveredByStationService personsCoveredByStationService;
 
     @Autowired
     private PersonMapping personMapping;
@@ -138,6 +137,69 @@ public class PersonService {
     }
 
     //TODO: rename method
+
+    //TODO: refactor code
+
+    public List<Person> findPersonByStation(int station) {
+        List<Person> personFound = (List<Person>) personRepository.findPersonByStation(
+                station);
+
+        if (personFound.isEmpty()) {
+            LOGGER.error(
+                    "PersonService -> No person covered by station: " + station
+                            + " found");
+            throw new NotFoundException(
+                    "PersonService -> No person covered by station: " + station
+                            + " found");
+        }
+        return personFound;
+    }
+
+    public CountAndPersonsCoveredDTO findPersonsWithStationNumber(
+            final int stationNumber) {
+        List<Person> persons = (List<Person>) personRepository.findPersonsWithStationNumber(
+                stationNumber);
+
+        if (persons.isEmpty()) {
+            LOGGER.error("PersonsService -> No address is "
+                    + "covered by the station " + "n°: " + stationNumber);
+            throw new NotFoundException(
+                    "No address is covered by the station n°: "
+                            + stationNumber);
+        }
+        LOGGER.info("PersonsCoveredByStationService  -> " + persons.size()
+                + " persons found.");
+        return personMapping.convertToCountAndPersonsCoveredDTO(persons);
+    }
+
+    public Date findDateByFirstNameAndLastName(String firstName,
+            String lastName) {
+        return personRepository.findDateByFirstNameAndLastName(firstName,
+                lastName);
+    }
+
+    public int getAge(String firstName, String lastName) {
+        Date dateOfBirth = findDateByFirstNameAndLastName(firstName, lastName);
+        return ageCountCalculator.calculateAge(dateOfBirth);
+    }
+
+    public int countNumberOfChildren(List<PersonsCoveredByStationDTO> persons) {
+        int countOfChildren = 0;
+        for (PersonsCoveredByStationDTO person : persons) {
+            if (person.getAge() <= 18)
+                countOfChildren++;
+        }
+        return countOfChildren;
+    }
+
+    public List<PersonFireDTO> getPersonCoveredByStation(String address) {
+        return personMapping.convertToFireDTOList(address);
+    }
+
+    public List<FloodDTO> getFloodDtoByStation(List<Integer> stations) {
+        return personMapping.convertToFloodDtoList(stations);
+    }
+
     public ChildAlertDTO getChildAlertDtoSorted(String address) {
         List<Person> personsByAddress = findPersonByAddress(address);
         List<PersonsCoveredByStationDTO> personsCoveredByStationDTOS = personMapping
@@ -147,11 +209,7 @@ public class PersonService {
         List<PersonsCoveredByStationDTO> children = new ArrayList<>();
         for (PersonsCoveredByStationDTO person : personsCoveredByStationDTOS) {
 
-            int age = ageCountCalculator.calculateAge(
-                    ageCountCalculator.convertToLocalDate(
-                            personsCoveredByStationService.findDateByFirstNameAndLastName(
-                                    person.getFirstName(),
-                                    person.getLastName())));
+            int age = getAge(person.getFirstName(), person.getLastName());
 
             if (age <= 18) {
                 children.add(person);
@@ -172,11 +230,19 @@ public class PersonService {
             return childAlertDTO;
         }
     }
-    //TODO: refactor code
 
+    public List<Person> getMailAddressesFromCity(String city) {
+        List<Person> personsMailAddresses = (List<Person>) personRepository.findMailAddressesFromCity(
+                city);
+        LOGGER.debug("Searching for mail addresses from persons who lives in: "
+                + city);
 
-    public List<FloodDTO> getFloodDtoByStation(List<Integer> stations) {
-        return personMapping.convertToFloodDto(stations);
+        if (personsMailAddresses.isEmpty()) {
+            LOGGER.error("No persons covered in city: " + city);
+            throw new NotFoundException("No persons covered in city: " + city);
+        }
+        LOGGER.info(personsMailAddresses.size() + " mail address(es) found");
+        return personsMailAddresses;
     }
 
     public List<Person> getPhoneNumberByStation(int station) {
@@ -195,38 +261,5 @@ public class PersonService {
         }
         LOGGER.info(personsPhoneNumber.size() + " number(s) found");
         return personsPhoneNumber;
-    }
-
-    public List<Person> findPersonByStation(int station) {
-        List<Person> personFound = (List<Person>) personRepository.findPersonByStation(
-                station);
-
-        if (personFound.isEmpty()) {
-            LOGGER.error(
-                    "PersonService -> No person covered by station: " + station
-                            + " found");
-            throw new NotFoundException(
-                    "PersonService -> No person covered by station: " + station
-                            + " found");
-        }
-        return personFound;
-    }
-
-    public List<PersonFireDTO> getPersonCoveredByStation(String address) {
-        return personMapping.convertToFireDTO(address);
-    }
-
-    public List<Person> findMailAddressesFromCity(String city) {
-        List<Person> personsMailAddresses = (List<Person>) personRepository.findMailAddressesFromCity(
-                city);
-        LOGGER.debug("Searching for mail addresses from persons who lives in: "
-                + city);
-
-        if (personsMailAddresses.isEmpty()) {
-            LOGGER.error("No persons covered in city: " + city);
-            throw new NotFoundException("No persons covered in city: " + city);
-        }
-        LOGGER.info(personsMailAddresses.size() + " mail address(es) found");
-        return personsMailAddresses;
     }
 }

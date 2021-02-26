@@ -61,6 +61,7 @@ public class JsonReader {
             LOGGER.error("Error while parsing json");
         } catch (JsonMappingException e) {
             LOGGER.error("Error while mapping json");
+            e.printStackTrace();
         } catch (IOException e) {
             LOGGER.error("I/O error");
         } finally {

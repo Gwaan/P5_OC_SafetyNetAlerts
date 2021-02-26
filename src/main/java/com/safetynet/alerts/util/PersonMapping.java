@@ -10,7 +10,6 @@ import com.safetynet.alerts.model.dto.PersonsCoveredByStationDTO;
 import com.safetynet.alerts.service.FirestationService;
 import com.safetynet.alerts.service.MedicalRecordService;
 import com.safetynet.alerts.service.PersonService;
-import com.safetynet.alerts.service.PersonsCoveredByStationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.ArrayList;
@@ -19,41 +18,51 @@ import java.util.List;
 @Component
 public class PersonMapping {
 
-    @Autowired
-    PersonsCoveredByStationService personsCoveredByStationService;
 
     @Autowired
-    AgeCountCalculator ageCountCalculator;
+    private MedicalRecordService medicalRecordService;
 
     @Autowired
-    MedicalRecordService medicalRecordService;
-
-    @Autowired
-    PersonService personService;
+    private PersonService personService;
 
     @Autowired
     FirestationService firestationService;
+
+    public PersonMapping(
+
+            MedicalRecordService medicalRecordService,
+            PersonService personService,
+            FirestationService firestationService) {
+        this.personService = personService;
+        this.medicalRecordService = medicalRecordService;
+        this.personService = personService;
+        this.firestationService = firestationService;
+    }
 
     public List<PersonsCoveredByStationDTO> convertToPersonsCoveredByStationDto(
             List<Person> persons) {
         List<PersonsCoveredByStationDTO> personsDTO = new ArrayList<>();
 
         for (Person person : persons) {
-            PersonsCoveredByStationDTO persDto = new PersonsCoveredByStationDTO();
-            persDto.setFirstName(person.getFirstName());
-            persDto.setLastName(person.getLastName());
-            persDto.setAddress(person.getAddress());
-            persDto.setCity(person.getCity());
-            persDto.setZip(person.getZip());
-            persDto.setPhone(person.getPhone());
-            persDto.setAge(ageCountCalculator.calculateAge(
-                    ageCountCalculator.convertToLocalDate(
-                            personsCoveredByStationService.findDateByFirstNameAndLastName(
-                                    person.getFirstName(),
-                                    person.getLastName()))));
-            personsDTO.add(persDto);
+            PersonsCoveredByStationDTO personsCoveredByStationDTO = convertPersonToPersonsCoveredByStationsDto(
+                    person);
+            personsDTO.add(personsCoveredByStationDTO);
         }
         return personsDTO;
+    }
+
+    public PersonsCoveredByStationDTO convertPersonToPersonsCoveredByStationsDto(
+            Person person) {
+        PersonsCoveredByStationDTO persDto = new PersonsCoveredByStationDTO();
+        persDto.setFirstName(person.getFirstName());
+        persDto.setLastName(person.getLastName());
+        persDto.setAddress(person.getAddress());
+        persDto.setCity(person.getCity());
+        persDto.setZip(person.getZip());
+        persDto.setPhone(person.getPhone());
+        persDto.setAge(personService.getAge(person.getFirstName(),
+                person.getLastName()));
+        return persDto;
     }
 
     public CountAndPersonsCoveredDTO convertToCountAndPersonsCoveredDTO(
@@ -64,7 +73,7 @@ public class PersonMapping {
                 convertToPersonsCoveredByStationDto(persons));
 
         countAndPersonsCoveredDTO.setCountOfChildren(
-                ageCountCalculator.countNumberOfChildren(
+                personService.countNumberOfChildren(
                         countAndPersonsCoveredDTO.getPersonsCovered()));
         countAndPersonsCoveredDTO.setCountOfAdults(
                 countAndPersonsCoveredDTO.getPersonsCovered().size()
@@ -73,57 +82,36 @@ public class PersonMapping {
         return countAndPersonsCoveredDTO;
     }
 
-    public List<PersonInfoDTO> convertToPersonInfoDto(List<Person> persons) {
+    public PersonInfoDTO convertPersonToPersonInfoDto(Person person) {
+        PersonInfoDTO personInfoDTO = new PersonInfoDTO();
+        personInfoDTO.setFirstName(person.getFirstName());
+        personInfoDTO.setLastName(person.getLastName());
+        personInfoDTO.setPhone(person.getPhone());
+        personInfoDTO.setAge(personService.getAge(person.getFirstName(),
+                person.getLastName()));
+        personInfoDTO.setAllergies(
+                medicalRecordService.getAllergies(person.getFirstName(),
+                        person.getLastName()));
+        personInfoDTO.setMedications(
+                medicalRecordService.getMedications(person.getFirstName(),
+                        person.getLastName()));
+        return personInfoDTO;
+    }
+
+    public List<PersonInfoDTO> convertToPersonInfoDtoList(
+            List<Person> persons) {
         List<PersonInfoDTO> personsInfoDTO = new ArrayList<>();
 
         for (Person person : persons) {
-            PersonInfoDTO personInfoDTO = new PersonInfoDTO();
-            personInfoDTO.setFirstName(person.getFirstName());
-            personInfoDTO.setLastName(person.getLastName());
-            personInfoDTO.setPhone(person.getPhone());
-            personInfoDTO.setAge(ageCountCalculator.calculateAge(
-                    ageCountCalculator.convertToLocalDate(
-                            personsCoveredByStationService.findDateByFirstNameAndLastName(
-                                    person.getFirstName(),
-                                    person.getLastName()))));
-            personInfoDTO.setAllergies(medicalRecordService
-                    .findByFirstNameAndLastName(person.getFirstName(),
-                            person.getLastName())
-                    .getAllergies());
-            personInfoDTO.setMedications(medicalRecordService
-                    .findByFirstNameAndLastName(person.getFirstName(),
-                            person.getLastName())
-                    .getMedications());
+            PersonInfoDTO personInfoDTO = convertPersonToPersonInfoDto(person);
             personsInfoDTO.add(personInfoDTO);
         }
 
         return personsInfoDTO;
     }
 
-    public PersonInfoDTO convertToPersonInfoDto(Person person) {
 
-        PersonInfoDTO personInfoDTO = new PersonInfoDTO();
-        personInfoDTO.setFirstName(person.getFirstName());
-        personInfoDTO.setLastName(person.getLastName());
-        personInfoDTO.setPhone(person.getPhone());
-        personInfoDTO.setAge(ageCountCalculator.calculateAge(
-                ageCountCalculator.convertToLocalDate(
-                        personsCoveredByStationService.findDateByFirstNameAndLastName(
-                                person.getFirstName(), person.getLastName()))));
-        personInfoDTO.setAllergies(medicalRecordService
-                .findByFirstNameAndLastName(person.getFirstName(),
-                        person.getLastName())
-                .getAllergies());
-        personInfoDTO.setMedications(medicalRecordService
-                .findByFirstNameAndLastName(person.getFirstName(),
-                        person.getLastName())
-                .getMedications());
-
-        return personInfoDTO;
-    }
-
-
-    public List<FloodDTO> convertToFloodDto(List<Integer> station) {
+    public List<FloodDTO> convertToFloodDtoList(List<Integer> station) {
         List<FloodDTO> floodDTOList = new ArrayList<>();
         List<AddressDTO> addressDtoList = new ArrayList<>();
         for (Integer integer : station) {
@@ -135,7 +123,7 @@ public class PersonMapping {
                 AddressDTO addressDTO = new AddressDTO();
                 List<Person> personsCovered = personService.findPersonByAddress(
                         firestationAddress);
-                List<PersonInfoDTO> personInfoDTOS = convertToPersonInfoDto(
+                List<PersonInfoDTO> personInfoDTOS = convertToPersonInfoDtoList(
                         personsCovered);
                 addressDTO.setHouseHold(firestationAddress);
                 addressDTO.setPersonInfoList(personInfoDTOS);
@@ -150,7 +138,7 @@ public class PersonMapping {
         return floodDTOList;
     }
 
-    public List<PersonFireDTO> convertToFireDTO(String address) {
+    public List<PersonFireDTO> convertToFireDTOList(String address) {
         List<PersonFireDTO> personFireDTOList = new ArrayList<>();
         List<Integer> listOfStations = firestationService.findStationByAddress(
                 address);
@@ -158,29 +146,29 @@ public class PersonMapping {
             List<Person> personsCovered = personService.findPersonByStation(
                     integer);
             for (Person person : personsCovered) {
-                PersonFireDTO personFireDTO = new PersonFireDTO();
-                personFireDTO.setFirstName(person.getFirstName());
-                personFireDTO.setLastName(person.getLastName());
-                personFireDTO.setPhone(person.getPhone());
-                personFireDTO.setAge(ageCountCalculator.calculateAge(
-                        ageCountCalculator.convertToLocalDate(
-                                personsCoveredByStationService.findDateByFirstNameAndLastName(
-                                        person.getFirstName(),
-                                        person.getLastName()))));
-                personFireDTO.setAllergies(medicalRecordService
-                        .findByFirstNameAndLastName(person.getFirstName(),
-                                person.getLastName())
-                        .getAllergies());
-                personFireDTO.setMedications(medicalRecordService
-                        .findByFirstNameAndLastName(person.getFirstName(),
-                                person.getLastName())
-                        .getMedications());
+                PersonFireDTO personFireDTO = convertPersonToFireDto(person);
                 personFireDTO.setStationNumber(integer);
                 personFireDTOList.add(personFireDTO);
 
             }
         }
         return personFireDTOList;
+    }
+
+    public PersonFireDTO convertPersonToFireDto(Person person) {
+        PersonFireDTO personFireDTO = new PersonFireDTO();
+        personFireDTO.setFirstName(person.getFirstName());
+        personFireDTO.setLastName(person.getLastName());
+        personFireDTO.setPhone(person.getPhone());
+        personFireDTO.setAge(personService.getAge(person.getFirstName(),
+                person.getLastName()));
+        personFireDTO.setAllergies(
+                medicalRecordService.getAllergies(person.getFirstName(),
+                        person.getLastName()));
+        personFireDTO.setMedications(
+                medicalRecordService.getMedications(person.getFirstName(),
+                        person.getLastName()));
+        return personFireDTO;
     }
 
 

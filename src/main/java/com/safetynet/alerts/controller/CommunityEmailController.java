@@ -26,6 +26,6 @@ public class CommunityEmailController {
         LOGGER.info("CommunityEmailController (GET) -> Retrieving all email "
                 + "address from city: " + city);
 
-        return personService.findMailAddressesFromCity(city);
+        return personService.getMailAddressesFromCity(city);
     }
 }

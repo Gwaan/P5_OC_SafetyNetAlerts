@@ -11,29 +11,22 @@ import java.util.List;
 @Component
 public class AgeCountCalculator {
 
-    public int calculateAge(LocalDate birthDate) {
+    public int calculateAge(Date birthDate) {
         LocalDate currentDate = LocalDate.now();
+        LocalDate birthDateConverted = null;
+        if (birthDate != null) {
+            birthDateConverted = birthDate
+                    .toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+        }
         if ((birthDate != null) && (currentDate != null)) {
-            return Period.between(birthDate, currentDate).getYears();
+            return Period.between(birthDateConverted, currentDate).getYears();
         } else {
             return 0;
         }
     }
 
-    public LocalDate convertToLocalDate(Date dateToConvert) {
-        return dateToConvert
-                .toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate();
-    }
 
-    public int countNumberOfChildren(List<PersonsCoveredByStationDTO> persons) {
-        int countOfChildren = 0;
-        for (PersonsCoveredByStationDTO person : persons) {
-            if (person.getAge() <= 18)
-                countOfChildren++;
-        }
-        return countOfChildren;
-    }
 
 }

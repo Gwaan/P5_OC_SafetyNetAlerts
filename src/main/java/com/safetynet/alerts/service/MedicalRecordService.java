@@ -82,5 +82,13 @@ public class MedicalRecordService {
                 firstName, lastName);
     }
 
+    public String[] getAllergies(String firstName, String lastName) {
+        return findByFirstNameAndLastName(firstName, lastName).getAllergies();
+    }
+
+    public String[] getMedications(String firstName, String lastName) {
+        return findByFirstNameAndLastName(firstName, lastName).getMedications();
+    }
+
 
 }
