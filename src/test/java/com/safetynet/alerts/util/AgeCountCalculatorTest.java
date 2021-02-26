@@ -1,12 +1,13 @@
 package com.safetynet.alerts.util;
 
-import org.apache.tomcat.jni.Local;
-import org.checkerframework.checker.units.qual.A;
+import com.safetynet.alerts.model.dto.PersonsCoveredByStationDTO;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -20,7 +21,7 @@ public class AgeCountCalculatorTest {
     }
 
     @AfterEach
-    public void afterEachtest() {
+    public void afterEachTest() {
         ageCountCalculator = null;
     }
 
@@ -59,6 +60,23 @@ public class AgeCountCalculatorTest {
 
         // ARRANGE
         assertTrue(result instanceof LocalDate);
+    }
+
+    @Test
+    public void should_Sort_Children() {
+        // ARRANGE
+        List<PersonsCoveredByStationDTO> list = new ArrayList<>();
+        for (int i = 16; i < 21; i++) {
+            PersonsCoveredByStationDTO personsCoveredByStationDTO = new PersonsCoveredByStationDTO();
+            personsCoveredByStationDTO.setAge(i);
+            list.add(personsCoveredByStationDTO);
+        }
+        // ACT
+        int result = ageCountCalculator.countNumberOfChildren(list);
+
+        // ARRANGE
+        assertEquals(3, result);
+
     }
 
 }

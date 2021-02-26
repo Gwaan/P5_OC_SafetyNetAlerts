@@ -1,6 +1,5 @@
 package com.safetynet.alerts.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 
