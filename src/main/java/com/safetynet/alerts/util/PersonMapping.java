@@ -99,7 +99,6 @@ public class PersonMapping {
         return personsInfoDTO;
     }
 
-    //TODO: floodDTOList must be returned in personService
 
     public List<FloodDTO> convertToFloodDto(List<Integer> station) {
         List<FloodDTO> floodDTOList = new ArrayList<>();

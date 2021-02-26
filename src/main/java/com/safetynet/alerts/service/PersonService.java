@@ -4,6 +4,7 @@ import com.safetynet.alerts.exceptions.AlreadyExistingException;
 import com.safetynet.alerts.exceptions.NotFoundException;
 import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.model.dto.ChildAlertDTO;
+import com.safetynet.alerts.model.dto.FloodDTO;
 import com.safetynet.alerts.model.dto.PersonsCoveredByStationDTO;
 import com.safetynet.alerts.repository.PersonRepository;
 import com.safetynet.alerts.util.AgeCountCalculator;
@@ -117,9 +118,8 @@ public class PersonService {
     }
 
     //TODO: rename method
-    public ChildAlertDTO sortChildrenAndAdults(String address) {
-        List<Person> personsByAddress = (List<Person>) findPersonByAddress(
-                address);
+    public ChildAlertDTO getChildAlertDtoSorted(String address) {
+        List<Person> personsByAddress = findPersonByAddress(address);
         List<PersonsCoveredByStationDTO> personsCoveredByStationDTOS = personMapping
                 .convertToPersonsCoveredByStationDto(personsByAddress);
         ChildAlertDTO childAlertDTO = new ChildAlertDTO();
@@ -154,9 +154,31 @@ public class PersonService {
     }
     //TODO: refactor code
 
-    public Iterable<Person> findHouseholdCoveredByStation(
+    /*public Iterable<Person> findHouseholdCoveredByStation(
             List<Integer> stations) {
         return personRepository.findHouseholdCoveredByStation(stations);
+    }*/
+
+    public List<FloodDTO> getFloodDtoByStation(List<Integer> stations) {
+        return personMapping.convertToFloodDto(stations);
+    }
+
+    public List<Person> getPhoneNumberByStation(int station) {
+        List<Person> personsPhoneNumber = (List<Person>) personRepository.findPhoneNumberByStation(
+                station);
+        LOGGER.debug(
+                "Searching for persons covered by station number: " + station);
+
+        if (personsPhoneNumber.isEmpty()) {
+            LOGGER.error(
+                    "PersonService -> No person covered by station: " + station
+                            + " found");
+            throw new NotFoundException(
+                    "PersonService -> No person covered by station: " + station
+                            + " found");
+        }
+        LOGGER.info(personsPhoneNumber.size() + " number(s) found");
+        return personsPhoneNumber;
     }
 
 

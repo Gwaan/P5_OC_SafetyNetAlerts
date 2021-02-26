@@ -1,7 +1,7 @@
 package com.safetynet.alerts.controller;
 
 import com.safetynet.alerts.model.dto.FloodDTO;
-import com.safetynet.alerts.util.PersonMapping;
+import com.safetynet.alerts.service.PersonService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,15 +17,15 @@ public class FloodController {
             FloodController.class);
 
     @Autowired
-    PersonMapping personMapping;
+    PersonService personService;
 
     @GetMapping("/flood/stations")
     public List<FloodDTO> floodController(
             @RequestParam
-                    final List<Integer> stations) {
+            final List<Integer> stations) {
         LOGGER.info("FloodController (GET) -> Getting all persons covered by "
                 + "station(s) n° " + stations);
-        return personMapping.convertToFloodDto(stations);
+        return personService.getFloodDtoByStation(stations);
     }
 
 }

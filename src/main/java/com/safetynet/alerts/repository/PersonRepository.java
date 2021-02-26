@@ -20,9 +20,11 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
     @Query(value = "SELECT p FROM Person p WHERE p.address IN :addresses")
     Iterable<Person> findPersonByAddress(List<String> addresses);
 
-    @Query(value = "SELECT p FROM Person p, Firestation f WHERE f.station IN "
-            + ":stations AND p.address = f.address ")
-    Iterable<Person> findHouseholdCoveredByStation(List<Integer> stations);
+
+    @Query(value = "SELECT new com.safetynet.alerts.model.Person(p.phone) FROM "
+            + "Person p, Firestation f WHERE f.station = :station AND p"
+            + ".address = f.address")
+    Iterable<Person> findPhoneNumberByStation(int station);
 
 
 }

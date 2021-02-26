@@ -1,6 +1,7 @@
 package com.safetynet.alerts.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import javax.persistence.Column;
@@ -15,19 +16,24 @@ import javax.validation.constraints.NotNull;
 @Data
 @Entity
 @Table(name = "persons")
-//@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Person {
 
     public Person() {
 
     }
 
-    public Person(@NotBlank(
+    /*public Person(@NotBlank(
             message = "First name field cannot be empty") String firstName,
             @NotBlank(
                     message = "Last name field cannot be empty") String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
+    }*/
+
+    public Person(@NotBlank(
+            message = "Phone field name cannot be empty") String phone) {
+        this.phone = phone;
     }
 
     @Id
