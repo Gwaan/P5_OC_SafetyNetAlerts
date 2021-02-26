@@ -65,7 +65,8 @@ public class JsonReader {
             LOGGER.error("I/O error");
         } finally {
             try {
-                is.close();
+                if (is != null)
+                    is.close();
             } catch (IOException e) {
                 LOGGER.error("Error while closing the InputStream");
             }
