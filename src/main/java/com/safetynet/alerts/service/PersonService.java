@@ -5,6 +5,7 @@ import com.safetynet.alerts.exceptions.NotFoundException;
 import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.model.dto.ChildAlertDTO;
 import com.safetynet.alerts.model.dto.FloodDTO;
+import com.safetynet.alerts.model.dto.PersonFireDTO;
 import com.safetynet.alerts.model.dto.PersonsCoveredByStationDTO;
 import com.safetynet.alerts.repository.PersonRepository;
 import com.safetynet.alerts.util.AgeCountCalculator;
@@ -79,6 +80,25 @@ public class PersonService {
         return person;
     }
 
+    public List<Person> findPersonsByFirstNameAndLastName(String firstName,
+            String lastName) {
+        LOGGER.debug("PersonService -> Searching for person " + firstName + " "
+                + lastName + " ...");
+        List<Person> persons = (List<Person>) personRepository.findPersonByFirstNameAndLastName(
+                firstName, lastName);
+
+        if (persons.isEmpty()) {
+            LOGGER.error("PersonService -> " + firstName + " " + lastName
+                    + " doesn't exist");
+            throw new NotFoundException(
+                    "Person " + firstName + " " + lastName + " doesn't exist");
+        }
+        LOGGER.info("PersonService -> Person " + firstName + " " + lastName
+                + " was found");
+        return persons;
+    }
+
+
     public void deletePerson(Person person) {
         personRepository.delete(person);
     }
@@ -95,7 +115,7 @@ public class PersonService {
 
     public boolean existsPersonByFirstNameAndLastName(String firstName,
             String lastName) {
-        return personRepository.existsPersonByFirstNameAndLastName(firstName,
+        return personRepository.existsPersonsByFirstNameAndLastName(firstName,
                 lastName);
     }
 
@@ -154,10 +174,6 @@ public class PersonService {
     }
     //TODO: refactor code
 
-    /*public Iterable<Person> findHouseholdCoveredByStation(
-            List<Integer> stations) {
-        return personRepository.findHouseholdCoveredByStation(stations);
-    }*/
 
     public List<FloodDTO> getFloodDtoByStation(List<Integer> stations) {
         return personMapping.convertToFloodDto(stations);
@@ -181,5 +197,36 @@ public class PersonService {
         return personsPhoneNumber;
     }
 
+    public List<Person> findPersonByStation(int station) {
+        List<Person> personFound = (List<Person>) personRepository.findPersonByStation(
+                station);
 
+        if (personFound.isEmpty()) {
+            LOGGER.error(
+                    "PersonService -> No person covered by station: " + station
+                            + " found");
+            throw new NotFoundException(
+                    "PersonService -> No person covered by station: " + station
+                            + " found");
+        }
+        return personFound;
+    }
+
+    public List<PersonFireDTO> getPersonCoveredByStation(String address) {
+        return personMapping.convertToFireDTO(address);
+    }
+
+    public List<Person> findMailAddressesFromCity(String city) {
+        List<Person> personsMailAddresses = (List<Person>) personRepository.findMailAddressesFromCity(
+                city);
+        LOGGER.debug("Searching for mail addresses from persons who lives in: "
+                + city);
+
+        if (personsMailAddresses.isEmpty()) {
+            LOGGER.error("No persons covered in city: " + city);
+            throw new NotFoundException("No persons covered in city: " + city);
+        }
+        LOGGER.info(personsMailAddresses.size() + " mail address(es) found");
+        return personsMailAddresses;
+    }
 }

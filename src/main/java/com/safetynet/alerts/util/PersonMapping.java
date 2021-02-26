@@ -4,6 +4,7 @@ import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.model.dto.AddressDTO;
 import com.safetynet.alerts.model.dto.CountAndPersonsCoveredDTO;
 import com.safetynet.alerts.model.dto.FloodDTO;
+import com.safetynet.alerts.model.dto.PersonFireDTO;
 import com.safetynet.alerts.model.dto.PersonInfoDTO;
 import com.safetynet.alerts.model.dto.PersonsCoveredByStationDTO;
 import com.safetynet.alerts.service.FirestationService;
@@ -99,6 +100,28 @@ public class PersonMapping {
         return personsInfoDTO;
     }
 
+    public PersonInfoDTO convertToPersonInfoDto(Person person) {
+
+        PersonInfoDTO personInfoDTO = new PersonInfoDTO();
+        personInfoDTO.setFirstName(person.getFirstName());
+        personInfoDTO.setLastName(person.getLastName());
+        personInfoDTO.setPhone(person.getPhone());
+        personInfoDTO.setAge(ageCountCalculator.calculateAge(
+                ageCountCalculator.convertToLocalDate(
+                        personsCoveredByStationService.findDateByFirstNameAndLastName(
+                                person.getFirstName(), person.getLastName()))));
+        personInfoDTO.setAllergies(medicalRecordService
+                .findByFirstNameAndLastName(person.getFirstName(),
+                        person.getLastName())
+                .getAllergies());
+        personInfoDTO.setMedications(medicalRecordService
+                .findByFirstNameAndLastName(person.getFirstName(),
+                        person.getLastName())
+                .getMedications());
+
+        return personInfoDTO;
+    }
+
 
     public List<FloodDTO> convertToFloodDto(List<Integer> station) {
         List<FloodDTO> floodDTOList = new ArrayList<>();
@@ -126,4 +149,39 @@ public class PersonMapping {
 
         return floodDTOList;
     }
+
+    public List<PersonFireDTO> convertToFireDTO(String address) {
+        List<PersonFireDTO> personFireDTOList = new ArrayList<>();
+        List<Integer> listOfStations = firestationService.findStationByAddress(
+                address);
+        for (Integer integer : listOfStations) {
+            List<Person> personsCovered = personService.findPersonByStation(
+                    integer);
+            for (Person person : personsCovered) {
+                PersonFireDTO personFireDTO = new PersonFireDTO();
+                personFireDTO.setFirstName(person.getFirstName());
+                personFireDTO.setLastName(person.getLastName());
+                personFireDTO.setPhone(person.getPhone());
+                personFireDTO.setAge(ageCountCalculator.calculateAge(
+                        ageCountCalculator.convertToLocalDate(
+                                personsCoveredByStationService.findDateByFirstNameAndLastName(
+                                        person.getFirstName(),
+                                        person.getLastName()))));
+                personFireDTO.setAllergies(medicalRecordService
+                        .findByFirstNameAndLastName(person.getFirstName(),
+                                person.getLastName())
+                        .getAllergies());
+                personFireDTO.setMedications(medicalRecordService
+                        .findByFirstNameAndLastName(person.getFirstName(),
+                                person.getLastName())
+                        .getMedications());
+                personFireDTO.setStationNumber(integer);
+                personFireDTOList.add(personFireDTO);
+
+            }
+        }
+        return personFireDTOList;
+    }
+
+
 }

@@ -19,22 +19,6 @@ import javax.validation.constraints.NotNull;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Person {
 
-    public Person() {
-
-    }
-
-    /*public Person(@NotBlank(
-            message = "First name field cannot be empty") String firstName,
-            @NotBlank(
-                    message = "Last name field cannot be empty") String lastName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-    }*/
-
-    public Person(@NotBlank(
-            message = "Phone field name cannot be empty") String phone) {
-        this.phone = phone;
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

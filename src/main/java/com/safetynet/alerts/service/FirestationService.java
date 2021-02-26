@@ -90,4 +90,19 @@ public class FirestationService {
         return fireStationRepository.existsFirestationByAddressAndStation(
                 address, station);
     }
+
+    public List<Integer> findStationByAddress(String address) {
+        List<Integer> stationIds = (List<Integer>) fireStationRepository.findStationByAddress(
+                address);
+        LOGGER.debug(
+                "FirestationService -> Searching for fire station at address"
+                        + address + "...");
+        if (stationIds.isEmpty()) {
+            LOGGER.error("No station is existing at address: " + address);
+            throw new NotFoundException(
+                    "No station is existing at address: " + address);
+
+        }
+        return stationIds;
+    }
 }
