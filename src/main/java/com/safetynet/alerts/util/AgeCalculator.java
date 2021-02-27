@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 @Component
-public class AgeCountCalculator {
+public class AgeCalculator {
 
     public int calculateAge(Date birthDate) {
         LocalDate currentDate = LocalDate.now();

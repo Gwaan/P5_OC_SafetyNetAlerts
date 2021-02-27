@@ -3,7 +3,7 @@ package com.safetynet.alerts.controller;
 import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.model.dto.PersonInfoDTO;
 import com.safetynet.alerts.service.PersonService;
-import com.safetynet.alerts.util.PersonMapping;
+import com.safetynet.alerts.util.Mapping;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class PersonInfoController {
     PersonService personService;
 
     @Autowired
-    PersonMapping personMapping;
+    Mapping personMapping;
 
     @GetMapping("/personInfo")
     public List<PersonInfoDTO> getPersonInfos(@RequestParam String firstName,
@@ -33,6 +33,6 @@ public class PersonInfoController {
         LOGGER.info("PersonInfoController (GET) -> Getting person infos for"
                 + firstName + " " + lastName);
         //TODO: call service instead of mapping
-        return personMapping.convertToPersonInfoDtoList(personsList);
+        return personMapping.convertPersonListToPersonInfoDtoList(personsList);
     }
 }

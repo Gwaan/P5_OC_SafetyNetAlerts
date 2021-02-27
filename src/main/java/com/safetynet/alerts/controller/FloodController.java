@@ -21,11 +21,10 @@ public class FloodController {
 
     @GetMapping("/flood/stations")
     public List<FloodDTO> floodController(
-            @RequestParam
-            final List<Integer> stations) {
+            @RequestParam final List<Integer> stations) {
         LOGGER.info("FloodController (GET) -> Getting all persons covered by "
                 + "station(s) n° " + stations);
-        return personService.getFloodDtoByStation(stations);
+        return personService.getFloodDtoListByStation(stations);
     }
 
 }

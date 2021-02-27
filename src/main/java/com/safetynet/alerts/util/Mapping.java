@@ -2,6 +2,7 @@ package com.safetynet.alerts.util;
 
 import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.model.dto.AddressDTO;
+import com.safetynet.alerts.model.dto.ChildAlertDTO;
 import com.safetynet.alerts.model.dto.CountAndPersonsCoveredDTO;
 import com.safetynet.alerts.model.dto.FloodDTO;
 import com.safetynet.alerts.model.dto.PersonFireDTO;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class PersonMapping {
+public class Mapping {
 
 
     @Autowired
@@ -26,11 +27,9 @@ public class PersonMapping {
     private PersonService personService;
 
     @Autowired
-    FirestationService firestationService;
+    private FirestationService firestationService;
 
-    public PersonMapping(
-
-            MedicalRecordService medicalRecordService,
+    public Mapping(MedicalRecordService medicalRecordService,
             PersonService personService,
             FirestationService firestationService) {
         this.personService = personService;
@@ -39,7 +38,7 @@ public class PersonMapping {
         this.firestationService = firestationService;
     }
 
-    public List<PersonsCoveredByStationDTO> convertToPersonsCoveredByStationDto(
+    public List<PersonsCoveredByStationDTO> convertPersonListToPersonsCoveredByStationDtoList(
             List<Person> persons) {
         List<PersonsCoveredByStationDTO> personsDTO = new ArrayList<>();
 
@@ -65,21 +64,16 @@ public class PersonMapping {
         return persDto;
     }
 
-    public CountAndPersonsCoveredDTO convertToCountAndPersonsCoveredDTO(
+    public List<PersonInfoDTO> convertPersonListToPersonInfoDtoList(
             List<Person> persons) {
-        CountAndPersonsCoveredDTO countAndPersonsCoveredDTO = new CountAndPersonsCoveredDTO();
+        List<PersonInfoDTO> personsInfoDTO = new ArrayList<>();
 
-        countAndPersonsCoveredDTO.setPersonsCovered(
-                convertToPersonsCoveredByStationDto(persons));
+        for (Person person : persons) {
+            PersonInfoDTO personInfoDTO = convertPersonToPersonInfoDto(person);
+            personsInfoDTO.add(personInfoDTO);
+        }
 
-        countAndPersonsCoveredDTO.setCountOfChildren(
-                personService.countNumberOfChildren(
-                        countAndPersonsCoveredDTO.getPersonsCovered()));
-        countAndPersonsCoveredDTO.setCountOfAdults(
-                countAndPersonsCoveredDTO.getPersonsCovered().size()
-                        - countAndPersonsCoveredDTO.getCountOfChildren());
-
-        return countAndPersonsCoveredDTO;
+        return personsInfoDTO;
     }
 
     public PersonInfoDTO convertPersonToPersonInfoDto(Person person) {
@@ -98,64 +92,20 @@ public class PersonMapping {
         return personInfoDTO;
     }
 
-    public List<PersonInfoDTO> convertToPersonInfoDtoList(
-            List<Person> persons) {
-        List<PersonInfoDTO> personsInfoDTO = new ArrayList<>();
+    public List<PersonFireDTO> convertPersonListToPersonFireList(
+            List<Person> persons, Integer station) {
+        List<PersonFireDTO> personFireDTOList = new ArrayList<>();
 
         for (Person person : persons) {
-            PersonInfoDTO personInfoDTO = convertPersonToPersonInfoDto(person);
-            personsInfoDTO.add(personInfoDTO);
+            PersonFireDTO personFireDTO = convertPersonToPersonFireDto(person);
+            personFireDTO.setStationNumber(station);
+            personFireDTOList.add(personFireDTO);
         }
 
-        return personsInfoDTO;
-    }
-
-
-    public List<FloodDTO> convertToFloodDtoList(List<Integer> station) {
-        List<FloodDTO> floodDTOList = new ArrayList<>();
-        List<AddressDTO> addressDtoList = new ArrayList<>();
-        for (Integer integer : station) {
-            FloodDTO floodDTO = new FloodDTO();
-            List<String> firestationAddresses = (List<String>) firestationService
-                    .findByStation(integer);
-
-            for (String firestationAddress : firestationAddresses) {
-                AddressDTO addressDTO = new AddressDTO();
-                List<Person> personsCovered = personService.findPersonByAddress(
-                        firestationAddress);
-                List<PersonInfoDTO> personInfoDTOS = convertToPersonInfoDtoList(
-                        personsCovered);
-                addressDTO.setHouseHold(firestationAddress);
-                addressDTO.setPersonInfoList(personInfoDTOS);
-                addressDtoList.add(addressDTO);
-            }
-
-            floodDTO.setStation(integer);
-            floodDTO.setHouseHoldCovered(addressDtoList);
-            floodDTOList.add(floodDTO);
-        }
-
-        return floodDTOList;
-    }
-
-    public List<PersonFireDTO> convertToFireDTOList(String address) {
-        List<PersonFireDTO> personFireDTOList = new ArrayList<>();
-        List<Integer> listOfStations = firestationService.findStationByAddress(
-                address);
-        for (Integer integer : listOfStations) {
-            List<Person> personsCovered = personService.findPersonByStation(
-                    integer);
-            for (Person person : personsCovered) {
-                PersonFireDTO personFireDTO = convertPersonToFireDto(person);
-                personFireDTO.setStationNumber(integer);
-                personFireDTOList.add(personFireDTO);
-
-            }
-        }
         return personFireDTOList;
     }
 
-    public PersonFireDTO convertPersonToFireDto(Person person) {
+    public PersonFireDTO convertPersonToPersonFireDto(Person person) {
         PersonFireDTO personFireDTO = new PersonFireDTO();
         personFireDTO.setFirstName(person.getFirstName());
         personFireDTO.setLastName(person.getLastName());
@@ -172,4 +122,66 @@ public class PersonMapping {
     }
 
 
+    public CountAndPersonsCoveredDTO convertPersonListToCountAndPersonsCoveredDTO(
+            List<Person> persons) {
+        CountAndPersonsCoveredDTO countAndPersonsCoveredDTO = new CountAndPersonsCoveredDTO();
+
+        countAndPersonsCoveredDTO.setPersonsCovered(
+                convertPersonListToPersonsCoveredByStationDtoList(persons));
+
+        countAndPersonsCoveredDTO.setCountOfChildren(
+                personService.countNumberOfChildren(
+                        countAndPersonsCoveredDTO.getPersonsCovered()));
+        countAndPersonsCoveredDTO.setCountOfAdults(
+                countAndPersonsCoveredDTO.getPersonsCovered().size()
+                        - countAndPersonsCoveredDTO.getCountOfChildren());
+
+        return countAndPersonsCoveredDTO;
+    }
+
+    public ChildAlertDTO createChildAlertDto(final List<Person> personList) {
+        ChildAlertDTO childAlertDTO = new ChildAlertDTO();
+        List<PersonsCoveredByStationDTO> personsCoveredByStationDTOList = convertPersonListToPersonsCoveredByStationDtoList(
+                personList);
+        List<PersonsCoveredByStationDTO> adults = new ArrayList<>();
+        List<PersonsCoveredByStationDTO> children = new ArrayList<>();
+
+        for (PersonsCoveredByStationDTO person : personsCoveredByStationDTOList) {
+            int age = personService.getAge(person.getFirstName(),
+                    person.getLastName());
+            if (age <= 18) {
+                children.add(person);
+            } else {
+                adults.add(person);
+            }
+        }
+        childAlertDTO.setAdults(adults);
+        childAlertDTO.setChildren(children);
+        return childAlertDTO;
+    }
+
+
+    public AddressDTO createAddressDto(final String address,
+            final List<Person> personInfoDTOList) {
+        AddressDTO addressDTO = new AddressDTO();
+        addressDTO.setHouseHold(address);
+        addressDTO.setPersonInfoList(
+                convertPersonListToPersonInfoDtoList(personInfoDTOList));
+
+        return addressDTO;
+
+    }
+
+    public FloodDTO createFloodDTO(final Integer station,
+            final List<AddressDTO> addressDTOList) {
+        FloodDTO floodDTO = new FloodDTO();
+        floodDTO.setStation(station);
+        floodDTO.setHouseHoldCovered(addressDTOList);
+
+        return floodDTO;
+    }
 }
+
+
+
+

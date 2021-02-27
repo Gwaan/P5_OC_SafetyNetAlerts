@@ -20,11 +20,10 @@ public class ChildAlertController {
 
     @GetMapping("/childAlert")
     public ChildAlertDTO getChildAtAddress(
-            @RequestParam(value="address")
-            final String address) {
+            @RequestParam(value = "address") final String address) {
         LOGGER.info("ChildAlertController (GET) -> Getting all persons "
                 + "covered by address: " + address);
-        return personService.getChildAlertDtoSorted(address);
+        return personService.getListOfChildrenByAddress(address);
     }
 
 }

@@ -19,12 +19,10 @@ public class FireController {
     PersonService personService;
 
     @GetMapping("/fire")
-    public List<PersonFireDTO> fireController(
-            @RequestParam
-                    String address) {
+    public List<PersonFireDTO> fireController(@RequestParam String address) {
         LOGGER.info("FireController (GET) -> Getting persons covered by "
                 + "fire station at address:  " + address);
-        return personService.getPersonCoveredByStation(address);
+        return personService.getFireDtoListByStation(address);
     }
 
 

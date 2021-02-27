@@ -1,21 +1,18 @@
 package com.safetynet.alerts.util;
 
-import com.safetynet.alerts.model.dto.PersonsCoveredByStationDTO;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AgeCountCalculatorTest {
+public class AgeCalculatorTest {
 
-    private AgeCountCalculator ageCountCalculator;
+    private AgeCalculator ageCountCalculator;
 
     @BeforeEach
     public void setUpPerTest() {
-        ageCountCalculator = new AgeCountCalculator();
+        ageCountCalculator = new AgeCalculator();
     }
 
     @AfterEach
