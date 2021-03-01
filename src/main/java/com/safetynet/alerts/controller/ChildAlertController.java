@@ -15,8 +15,11 @@ public class ChildAlertController {
     private static final Logger LOGGER = LogManager.getLogger(
             ChildAlertController.class);
 
-    @Autowired
     PersonService personService;
+
+    public ChildAlertController(PersonService personService) {
+        this.personService = personService;
+    }
 
     @GetMapping("/childAlert")
     public ChildAlertDTO getChildAtAddress(

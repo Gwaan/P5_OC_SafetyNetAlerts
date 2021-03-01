@@ -17,11 +17,13 @@ public class MedicalRecordService {
 
     private static final Logger LOGGER = LogManager.getLogger(
             MedicalRecordService.class);
-    @Autowired
+
     private MedicalRecordRepository medicalRecordRepository;
 
-    @Autowired
-    private AgeCountCalculator ageCalculator;
+    public MedicalRecordService(
+            MedicalRecordRepository medicalRecordRepository) {
+        this.medicalRecordRepository = medicalRecordRepository;
+    }
 
     public Iterable<MedicalRecord> list() {
         return medicalRecordRepository.findAll();
@@ -106,23 +108,10 @@ public class MedicalRecordService {
                 firstName, lastName);
     }
 
-    public String[] getAllergies(String firstName, String lastName) {
-        return findByFirstNameAndLastName(firstName, lastName).getAllergies();
-    }
-
-    public String[] getMedications(String firstName, String lastName) {
-        return findByFirstNameAndLastName(firstName, lastName).getMedications();
-    }
-
     public Date findDateByFirstNameAndLastName(String firstName,
             String lastName) {
         return medicalRecordRepository.findDateByFirstNameAndLastName(firstName,
                 lastName);
-    }
-
-    public int getAge(String firstName, String lastName) {
-        Date dateOfBirth = findDateByFirstNameAndLastName(firstName, lastName);
-        return ageCalculator.calculateAge(dateOfBirth);
     }
 
 

@@ -1,6 +1,7 @@
-/*package com.safetynet.alerts.util;
+package com.safetynet.alerts.util;
 
 
+import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.model.dto.AddressDTO;
 import com.safetynet.alerts.model.dto.ChildAlertDTO;
@@ -12,18 +13,26 @@ import com.safetynet.alerts.model.dto.PersonsCoveredByStationDTO;
 import com.safetynet.alerts.service.FirestationService;
 import com.safetynet.alerts.service.MedicalRecordService;
 import com.safetynet.alerts.service.PersonService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import javax.validation.constraints.AssertTrue;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,159 +41,167 @@ public class MappingTest {
     private static Mapping mapping;
 
     @Mock
-    private static MedicalRecordService medicalRecordService;
+    private static AgeCountCalculator ageCountCalculator;
 
-    @Mock
-    private static PersonService personService;
+    private static List<Person> personList;
 
-    @Mock
-    private static FirestationService firestationService;
-
-    private static List<Person> personList = new ArrayList<>();
+    private static List<MedicalRecord> medicalRecordList;
 
     private static Person person;
 
+    private static MedicalRecord medicalRecord;
+
     @BeforeEach
     void beforeEach() {
-        mapping = new Mapping(medicalRecordService, personService,
-                firestationService);
+        mapping = new Mapping(ageCountCalculator);
         person = new Person(1L, "Test", "Test", "123 Test", "Testcity", 12345,
                 "0123456789", "test@test.fr");
-        for (int i = 0; i < 3; i++) {
-            personList.add(new Person(1L, "Test first name", "Test last name",
-                    "Test address", "Test city", 12345, "Test phone",
-                    "test@test" + ".test"));
-        }
+        medicalRecord = new MedicalRecord(1L, "Tes", "Test",
+                new Date(1991 + 1900, 8, 28), new String[]{"test", "test12"},
+                new String[]{"test", "test123"});
+
+        personList = new ArrayList<>();
+        medicalRecordList = new ArrayList<>();
+        personList.add(
+                new Person(1L, "John", "Doe", "Test address", "Test city",
+                        12345, "Test phone", "test@test" + ".test"));
+        personList.add(
+                new Person(1L, "Jane", "Doe", "Test address", "Test city",
+                        12345, "Test phone", "test@test" + ".test"));
+        personList.add(
+                new Person(1L, "Test", "Test", "Test address", "Test city",
+                        12345, "Test phone", "test@test" + ".test"));
+
+
+        medicalRecordList.add(new MedicalRecord(1L, "John", "Doe",
+                new Date(1991 + 1900, 8, 28), new String[]{"test", "test12"},
+                new String[]{"test", "test123"}));
+        medicalRecordList.add(new MedicalRecord(1L, "Jane", "Doe",
+                new Date(1991 + 1900, 8, 28), new String[]{"test", "test12"},
+                new String[]{"test", "test123"}));
+        medicalRecordList.add(new MedicalRecord(1L, "Test", "Test",
+                new Date(1991 + 1900, 8, 28), new String[]{"test", "test12"},
+                new String[]{"test", "test123"}));
+
     }
+
+    @AfterEach
+    void afterEach() {
+        personList = null;
+        medicalRecordList = null;
+        person = null;
+        medicalRecord = null;
+    }
+
 
     @Test
     public void should_Return_A_PersonCoveredByStationDTO_List() {
-        // ARRANGE
 
-        // ACT
         List<PersonsCoveredByStationDTO> personInfoDTOList = mapping.convertPersonListToPersonsCoveredByStationDtoList(
-                personList);
+                personList, medicalRecordList);
 
-
-        // ASSERT
         assertTrue(
                 personInfoDTOList.get(0) instanceof PersonsCoveredByStationDTO);
-        assertNotNull(personInfoDTOList);
-
     }
 
     @Test
     public void should_Return_A_PersonsCoveredByStationDTO_Object() {
-        // ARRANGE
-        when(personService.getAge(anyString(), anyString())).thenReturn(19);
+        when(ageCountCalculator.calculateAge(any(Date.class))).thenReturn(29);
 
-        // ACT
         PersonsCoveredByStationDTO personsCoveredByStationDTO = mapping.convertPersonToPersonsCoveredByStationsDto(
-                person);
+                person, medicalRecord);
 
-        // ASSERT
         assertTrue(
                 personsCoveredByStationDTO instanceof PersonsCoveredByStationDTO);
-        assertEquals(19, personsCoveredByStationDTO.getAge());
+        assertEquals(29, personsCoveredByStationDTO.getAge());
+        verify(ageCountCalculator, times(1)).calculateAge(any());
+
     }
 
     @Test
-    public void should_Return_A_PersonInfoDto_List() {
-        // ARRANGE
-
-        // ACT
+    public void should_Return_A_PersonInfoDTO_List() {
         List<PersonInfoDTO> personInfoDTOList = mapping.convertPersonListToPersonInfoDtoList(
-                personList);
+                personList, medicalRecordList);
 
-        // ASSERT
         assertTrue(personInfoDTOList.get(0) instanceof PersonInfoDTO);
-        assertNotNull(personInfoDTOList);
-
     }
 
     @Test
-    public void should_Return_A_PersonInfoDto_Object() {
-        // ARRANGE
-        when(personService.getAge(anyString(), anyString())).thenReturn(19);
+    public void should_Return_A_PersonInfoDTO_Object() {
+        when(ageCountCalculator.calculateAge(any(Date.class))).thenReturn(29);
 
-        // ACT
         PersonInfoDTO personInfoDTO = mapping.convertPersonToPersonInfoDto(
-                person);
+                person, medicalRecord);
 
-        // ASSERT
         assertTrue(personInfoDTO instanceof PersonInfoDTO);
-        assertEquals(19, personInfoDTO.getAge());
+        assertEquals(29, personInfoDTO.getAge());
+        assertEquals(medicalRecord.getAllergies(),
+                personInfoDTO.getAllergies());
+        assertEquals(medicalRecord.getMedications(),
+                personInfoDTO.getMedications());
+        verify(ageCountCalculator, times(1)).calculateAge(any());
+
     }
 
     @Test
     public void should_Return_A_PersonFireDTO_List() {
-        // ARRANGE
-
-        // ACT
         List<PersonFireDTO> personFireDTOList = mapping.convertPersonListToPersonFireList(
-                personList, 1);
+                personList, 1, medicalRecordList);
 
-        // ASSERT
         assertTrue(personFireDTOList.get(0) instanceof PersonFireDTO);
-        assertEquals(personFireDTOList.get(0).getStationNumber(), 1);
+        assertEquals(1, personFireDTOList.get(0).getStationNumber());
     }
 
     @Test
     public void should_Return_A_PersonFireDTO_Object() {
-        // ARRANGE
-        when(personService.getAge(anyString(), anyString())).thenReturn(20);
-        when(medicalRecordService.getAllergies(anyString(),
-                anyString())).thenReturn(new String[]{"test", "test"});
-        ;
-        when(medicalRecordService.getMedications(anyString(),
-                anyString())).thenReturn(new String[]{"test", "test"});
+        when(ageCountCalculator.calculateAge(any(Date.class))).thenReturn(29);
 
-        // ACT
         PersonFireDTO personFireDTO = mapping.convertPersonToPersonFireDto(
-                person);
+                person, medicalRecord);
 
-        // ASSERT
         assertTrue(personFireDTO instanceof PersonFireDTO);
-        assertNotNull(personFireDTO);
-        assertNotNull(personFireDTO.getAllergies());
-        assertNotNull(personFireDTO.getMedications());
+        assertEquals(29, personFireDTO.getAge());
+        assertEquals(medicalRecord.getMedications(),
+                personFireDTO.getMedications());
+        assertEquals(medicalRecord.getAllergies(),
+                personFireDTO.getAllergies());
+        verify(ageCountCalculator, times(1)).calculateAge(any());
     }
 
     @Test
-    public void should_Return_A_CountsAndPersonsCoveredDTO_Object() {
-        // ARRANGE
-        when(personService.countNumberOfChildren(anyList())).thenReturn(10);
+    public void should_Return_A_CountAndPersonsCoveredDTO_List() {
+        when(ageCountCalculator.countNumberOfChildren(anyList())).thenReturn(2);
 
-        // ACT
         CountAndPersonsCoveredDTO countAndPersonsCoveredDTO = mapping.convertPersonListToCountAndPersonsCoveredDTO(
-                personList);
+                personList, medicalRecordList);
 
-        // ASSERT
         assertTrue(
                 countAndPersonsCoveredDTO instanceof CountAndPersonsCoveredDTO);
+        assertEquals(2, countAndPersonsCoveredDTO.getCountOfChildren());
+        assertEquals(1, countAndPersonsCoveredDTO.getCountOfAdults());
+
     }
 
     @Test
     public void should_Return_A_ChildAlertDTO_Object() {
-        // ARRANGE
-        when(personService.getAge(anyString(), anyString())).thenReturn(19);
+        when(ageCountCalculator.calculateAge(any(Date.class))).thenReturn(18);
 
-        // ACT
-        ChildAlertDTO childAlertDTO = mapping.createChildAlertDto(personList);
+        ChildAlertDTO childAlertDTO = mapping.createChildAlertDto(personList,
+                medicalRecordList);
 
-        // ASSERT
         assertTrue(childAlertDTO instanceof ChildAlertDTO);
+        assertEquals(3, childAlertDTO.getChildren().size());
+        assertEquals(0, childAlertDTO.getAdults().size());
+        verify(ageCountCalculator, times(6)).calculateAge(any());
     }
 
     @Test
     public void should_Return_An_AddressDTO_Object() {
-        // ARRANGE
+        AddressDTO addressDTO = mapping.createAddressDto("TestAddress",
+                personList, medicalRecordList);
 
-        // ACT
-        AddressDTO addressDTO = mapping.createAddressDto("test", personList);
-
-        // ASSERT
         assertTrue(addressDTO instanceof AddressDTO);
+        assertEquals("TestAddress", addressDTO.getHouseHold());
     }
 
     @Test
@@ -199,6 +216,46 @@ public class MappingTest {
         assertTrue(floodDTO instanceof FloodDTO);
     }
 
+    @Test
+    public void should_Return_A_MedicalRecord_Mapped_With_A_PersonsCoveredByStationDTO_Object() {
+        PersonsCoveredByStationDTO personsCoveredByStationDTO = new PersonsCoveredByStationDTO();
+        personsCoveredByStationDTO.setFirstName("John");
+        personsCoveredByStationDTO.setLastName("Doe");
+
+        MedicalRecord medicalRecord = mapping.mapMedicalRecordsWithPersonCoveredByStationDTO(
+                personsCoveredByStationDTO, medicalRecordList);
+
+        assertEquals(personsCoveredByStationDTO.getFirstName(),
+                medicalRecord.getFirstName());
+        assertEquals(personsCoveredByStationDTO.getLastName(),
+                medicalRecord.getLastName());
+    }
+
+    @Test
+    public void should_Return_A_MedicalRecord_Mapped_With_A_Person_Object() {
+
+        MedicalRecord medicalRecord = mapping.mapMedicalRecordsWithPerson(
+                person, medicalRecordList);
+
+        assertEquals(person.getFirstName(), medicalRecord.getFirstName());
+        assertEquals(person.getLastName(), medicalRecord.getLastName());
+
+    }
+
+    @Test
+    public void should_Return_A_MedicalRecord_Mapped_With_A_PersonInfoDTO_Object() {
+        PersonInfoDTO personInfoDTO = new PersonInfoDTO();
+        personInfoDTO.setFirstName("Jane");
+        personInfoDTO.setLastName("Doe");
+
+        MedicalRecord medicalRecord = mapping.mapMedicalRecordsWithPersonInfoDTO(
+                personInfoDTO, medicalRecordList);
+
+        assertEquals(personInfoDTO.getFirstName(),
+                medicalRecord.getFirstName());
+        assertEquals(personInfoDTO.getLastName(), medicalRecord.getLastName());
+
+    }
+
 
 }
-*/

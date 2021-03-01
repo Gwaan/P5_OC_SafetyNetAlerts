@@ -18,6 +18,19 @@ import java.util.*;
 @Table(name = "medicalrecords")
 public class MedicalRecord {
 
+    public MedicalRecord() {
+    }
+
+    public MedicalRecord(Long id, String firstName, String lastName,
+            Date birthDate, String[] medications, String[] allergies) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthDate = birthDate;
+        this.medications = medications;
+        this.allergies = allergies;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -40,7 +53,6 @@ public class MedicalRecord {
 
     @Column(name = "allergies")
     private String[] allergies;
-
 
 
 }

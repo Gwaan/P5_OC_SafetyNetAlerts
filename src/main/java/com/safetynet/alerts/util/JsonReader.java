@@ -28,15 +28,19 @@ public class JsonReader {
 
     private static final Logger LOGGER = LogManager.getLogger(JsonReader.class);
 
-    @Autowired
     private PersonService personService;
 
-    @Autowired
     private FirestationService firestationService;
 
-    @Autowired
     private MedicalRecordService medicalRecordService;
 
+    public JsonReader(PersonService personService,
+            FirestationService firestationService,
+            MedicalRecordService medicalRecordService) {
+        this.personService = personService;
+        this.firestationService = firestationService;
+        this.medicalRecordService = medicalRecordService;
+    }
 
     public void readJsonAndSaveToDb() {
         ObjectMapper mapper = null;

@@ -20,16 +20,19 @@ public class FirestationController {
     private static final Logger LOGGER = LogManager.getLogger(
             FirestationController.class);
 
-    @Autowired
     FirestationService firestationService;
 
-    @Autowired
     PersonService personService;
 
+    public FirestationController(FirestationService firestationService,
+            PersonService personService) {
+        this.firestationService = firestationService;
+        this.personService = personService;
+    }
 
     @GetMapping("/firestation")
     public CountAndPersonsCoveredDTO getPersonsCoveredByStationId(
-            @RequestParam(value = "stationNumber") final int stationNumber) {
+            @RequestParam final int stationNumber) {
         LOGGER.info(
                 "FireStationController (GET) -> Getting all persons covered "
                         + "by station number: " + stationNumber);
@@ -57,8 +60,7 @@ public class FirestationController {
 
     @PutMapping("/firestation")
     public ResponseEntity<Firestation> updateFirestation(
-            @RequestParam(value = "address") final String address,
-            @RequestParam(value = "station") final int station,
+            @RequestParam final String address, @RequestParam final int station,
             @Valid @RequestBody final Firestation firestation) {
 
         Firestation firestationToUpdate = firestationService.findFirestationByAddressAndStation(

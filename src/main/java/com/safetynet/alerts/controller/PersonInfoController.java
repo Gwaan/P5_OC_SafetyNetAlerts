@@ -18,11 +18,11 @@ public class PersonInfoController {
     private static final Logger LOGGER = LogManager.getLogger(
             PersonInfoController.class);
 
-    @Autowired
     PersonService personService;
 
-    @Autowired
-    Mapping personMapping;
+    public PersonInfoController(PersonService personService) {
+        this.personService = personService;
+    }
 
     @GetMapping("/personInfo")
     public List<PersonInfoDTO> getPersonInfos(@RequestParam String firstName,

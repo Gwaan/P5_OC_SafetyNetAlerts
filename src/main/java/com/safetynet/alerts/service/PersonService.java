@@ -23,33 +23,26 @@ import java.util.List;
 @Service
 public class PersonService {
 
-    @Autowired
     private PersonRepository personRepository;
 
-    @Autowired
-    private AgeCountCalculator ageCountCalculator;
-
-    @Autowired
     private Mapping mapping;
 
-    @Autowired
     private FirestationService firestationService;
 
-    @Autowired
     private MedicalRecordService medicalRecordService;
+
+    public PersonService(PersonRepository personRepository, Mapping mapping,
+            FirestationService firestationService,
+            MedicalRecordService medicalRecordService) {
+        this.personRepository = personRepository;
+        this.mapping = mapping;
+        this.firestationService = firestationService;
+        this.medicalRecordService = medicalRecordService;
+    }
 
     private static final Logger LOGGER = LogManager.getLogger(
             PersonService.class);
 
-    //TODO: fix bean cycle with constructor injection
-    /*public PersonService(PersonRepository personRepository,
-            AgeCalculator ageCountCalculator, Mapping mapping,
-            FirestationService firestationService) {
-        this.personRepository = personRepository;
-        this.ageCountCalculator = ageCountCalculator;
-        this.mapping = mapping;
-        this.firestationService = firestationService;
-    }*/
 
     public Iterable<Person> findAll() {
         return personRepository.findAll();

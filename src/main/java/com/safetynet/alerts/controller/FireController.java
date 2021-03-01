@@ -15,8 +15,12 @@ public class FireController {
 
     private static final Logger LOGGER = LogManager.getLogger(
             FloodController.class);
-    @Autowired
+
     PersonService personService;
+
+    public FireController(PersonService personService) {
+        this.personService = personService;
+    }
 
     @GetMapping("/fire")
     public List<PersonFireDTO> fireController(@RequestParam String address) {

@@ -17,11 +17,16 @@ import java.util.List;
 @Component
 public class Mapping {
 
-    @Autowired
+
     private AgeCountCalculator ageCountCalculator;
 
+    public Mapping(AgeCountCalculator ageCountCalculator) {
+        this.ageCountCalculator = ageCountCalculator;
+    }
+
     public List<PersonsCoveredByStationDTO> convertPersonListToPersonsCoveredByStationDtoList(
-            List<Person> persons, List<MedicalRecord> medicalRecords) {
+            final List<Person> persons,
+            final List<MedicalRecord> medicalRecords) {
         List<PersonsCoveredByStationDTO> personsDTO = new ArrayList<>();
 
         for (Person person : persons) {
@@ -37,7 +42,7 @@ public class Mapping {
     }
 
     public PersonsCoveredByStationDTO convertPersonToPersonsCoveredByStationsDto(
-            Person person, MedicalRecord medicalRecord) {
+            final Person person, final MedicalRecord medicalRecord) {
         PersonsCoveredByStationDTO persDto = new PersonsCoveredByStationDTO();
         persDto.setFirstName(person.getFirstName());
         persDto.setLastName(person.getLastName());
@@ -51,7 +56,8 @@ public class Mapping {
     }
 
     public List<PersonInfoDTO> convertPersonListToPersonInfoDtoList(
-            List<Person> persons, List<MedicalRecord> medicalRecords) {
+            final List<Person> persons,
+            final List<MedicalRecord> medicalRecords) {
         List<PersonInfoDTO> personsInfoDTO = new ArrayList<>();
 
         for (Person person : persons) {
@@ -66,8 +72,8 @@ public class Mapping {
         return personsInfoDTO;
     }
 
-    public PersonInfoDTO convertPersonToPersonInfoDto(Person person,
-            MedicalRecord medicalRecord) {
+    public PersonInfoDTO convertPersonToPersonInfoDto(final Person person,
+            final MedicalRecord medicalRecord) {
         PersonInfoDTO personInfoDTO = new PersonInfoDTO();
         personInfoDTO.setFirstName(person.getFirstName());
         personInfoDTO.setLastName(person.getLastName());
@@ -80,8 +86,8 @@ public class Mapping {
     }
 
     public List<PersonFireDTO> convertPersonListToPersonFireList(
-            List<Person> persons, Integer station,
-            List<MedicalRecord> medicalRecords) {
+            final List<Person> persons, final Integer station,
+            final List<MedicalRecord> medicalRecords) {
         List<PersonFireDTO> personFireDTOList = new ArrayList<>();
 
         for (Person person : persons) {
@@ -97,8 +103,8 @@ public class Mapping {
         return personFireDTOList;
     }
 
-    public PersonFireDTO convertPersonToPersonFireDto(Person person,
-            MedicalRecord medicalRecord) {
+    public PersonFireDTO convertPersonToPersonFireDto(final Person person,
+            final MedicalRecord medicalRecord) {
         PersonFireDTO personFireDTO = new PersonFireDTO();
         personFireDTO.setFirstName(person.getFirstName());
         personFireDTO.setLastName(person.getLastName());
@@ -112,7 +118,8 @@ public class Mapping {
 
 
     public CountAndPersonsCoveredDTO convertPersonListToCountAndPersonsCoveredDTO(
-            List<Person> persons, List<MedicalRecord> medicalRecords) {
+            final List<Person> persons,
+            final List<MedicalRecord> medicalRecords) {
         CountAndPersonsCoveredDTO countAndPersonsCoveredDTO = new CountAndPersonsCoveredDTO();
 
         countAndPersonsCoveredDTO.setPersonsCovered(
@@ -130,7 +137,7 @@ public class Mapping {
     }
 
     public ChildAlertDTO createChildAlertDto(final List<Person> personList,
-            List<MedicalRecord> medicalRecords) {
+            final List<MedicalRecord> medicalRecords) {
         ChildAlertDTO childAlertDTO = new ChildAlertDTO();
         List<PersonsCoveredByStationDTO> personsCoveredByStationDTOList = convertPersonListToPersonsCoveredByStationDtoList(
                 personList, medicalRecords);
@@ -157,7 +164,7 @@ public class Mapping {
 
     public AddressDTO createAddressDto(final String address,
             final List<Person> personInfoDTOList,
-            List<MedicalRecord> medicalRecords) {
+            final List<MedicalRecord> medicalRecords) {
         AddressDTO addressDTO = new AddressDTO();
         addressDTO.setHouseHold(address);
         addressDTO.setPersonInfoList(
@@ -198,9 +205,6 @@ public class Mapping {
             List<MedicalRecord> medicalRecords) {
         MedicalRecord medicalRecordToReturn = null;
         for (MedicalRecord medicalRecord : medicalRecords) {
-            if (medicalRecord == null) {
-                break;
-            }
             if (person
                     .getFirstName()
                     .equalsIgnoreCase(medicalRecord.getFirstName()) && person

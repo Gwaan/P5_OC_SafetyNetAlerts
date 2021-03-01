@@ -16,13 +16,15 @@ public class PhoneAlertController {
     private static final Logger LOGGER = LogManager.getLogger(
             PhoneAlertController.class);
 
-    @Autowired
     PersonService personService;
+
+    public PhoneAlertController(PersonService personService) {
+        this.personService = personService;
+    }
 
     @GetMapping("/phoneAlert")
     public List<Person> phoneAlertController(
-            @RequestParam(value = "firestation")
-            final int station) {
+            @RequestParam(value = "firestation") final int station) {
         LOGGER.info("PhoneAlertController (GET) -> Getting all phone numbers "
                 + "for station n° " + station + " ...");
         return personService.getPhoneNumberByStation(station);

@@ -16,8 +16,11 @@ public class FloodController {
     private static final Logger LOGGER = LogManager.getLogger(
             FloodController.class);
 
-    @Autowired
     PersonService personService;
+
+    public FloodController(PersonService personService) {
+        this.personService = personService;
+    }
 
     @GetMapping("/flood/stations")
     public List<FloodDTO> floodController(

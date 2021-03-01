@@ -18,9 +18,12 @@ public class FirestationService {
     private static final Logger LOGGER = LogManager.getLogger(
             FirestationService.class);
 
-    @Autowired
     private FirestationRepository fireStationRepository;
 
+
+    public FirestationService(FirestationRepository fireStationRepository) {
+        this.fireStationRepository = fireStationRepository;
+    }
 
     public Iterable<Firestation> findAll() {
         return fireStationRepository.findAll();

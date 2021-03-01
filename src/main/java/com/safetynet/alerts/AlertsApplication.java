@@ -12,9 +12,11 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 public class AlertsApplication implements CommandLineRunner {
 
-    @Autowired
     private JsonReader jsonReader;
 
+    public AlertsApplication(JsonReader jsonReader) {
+        this.jsonReader = jsonReader;
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(AlertsApplication.class, args);

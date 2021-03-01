@@ -16,8 +16,11 @@ public class CommunityEmailController {
     private static final Logger LOGGER = LogManager.getLogger(
             CommunityEmailController.class);
 
-    @Autowired
     PersonService personService;
+
+    public CommunityEmailController(PersonService personService) {
+        this.personService = personService;
+    }
 
     @GetMapping("/communityEmail")
     public List<Person> getAllMailAddressesFromCity(
