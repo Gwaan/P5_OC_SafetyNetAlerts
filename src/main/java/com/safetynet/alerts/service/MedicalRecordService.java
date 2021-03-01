@@ -4,10 +4,13 @@ import com.safetynet.alerts.exceptions.AlreadyExistingException;
 import com.safetynet.alerts.exceptions.NotFoundException;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.repository.MedicalRecordRepository;
+import com.safetynet.alerts.util.AgeCountCalculator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class MedicalRecordService {
@@ -16,6 +19,9 @@ public class MedicalRecordService {
             MedicalRecordService.class);
     @Autowired
     private MedicalRecordRepository medicalRecordRepository;
+
+    @Autowired
+    private AgeCountCalculator ageCalculator;
 
     public Iterable<MedicalRecord> list() {
         return medicalRecordRepository.findAll();
@@ -62,6 +68,24 @@ public class MedicalRecordService {
         return medicalRecord;
     }
 
+    public List<MedicalRecord> findMedicalRecordsByFirstNameAndLastName(
+            String firstName, String lastName) {
+        LOGGER.debug("MedicalRecordService -> Searching for person " + firstName
+                + " " + lastName + " ...");
+        List<MedicalRecord> medicalRecordList = (List<MedicalRecord>) medicalRecordRepository
+                .findMedicalRecordsByFirstNameAndLastName(firstName, lastName);
+        if (medicalRecordList.isEmpty()) {
+            LOGGER.error("MedicalRecordService -> " + firstName + " " + lastName
+                    + " doesn't exist");
+            throw new NotFoundException(
+                    "Person " + firstName + " " + lastName + " doesn't exist");
+        }
+        LOGGER.info(
+                "MedicalRecordService -> Medical record for " + firstName + " "
+                        + lastName + " was found");
+        return medicalRecordList;
+    }
+
     public void deleteMedicalRecord(MedicalRecord medicalRecord) {
         medicalRecordRepository.delete(medicalRecord);
     }
@@ -88,6 +112,17 @@ public class MedicalRecordService {
 
     public String[] getMedications(String firstName, String lastName) {
         return findByFirstNameAndLastName(firstName, lastName).getMedications();
+    }
+
+    public Date findDateByFirstNameAndLastName(String firstName,
+            String lastName) {
+        return medicalRecordRepository.findDateByFirstNameAndLastName(firstName,
+                lastName);
+    }
+
+    public int getAge(String firstName, String lastName) {
+        Date dateOfBirth = findDateByFirstNameAndLastName(firstName, lastName);
+        return ageCalculator.calculateAge(dateOfBirth);
     }
 
 

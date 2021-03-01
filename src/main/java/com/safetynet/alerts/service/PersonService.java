@@ -2,22 +2,22 @@ package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.exceptions.AlreadyExistingException;
 import com.safetynet.alerts.exceptions.NotFoundException;
+import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.model.dto.AddressDTO;
 import com.safetynet.alerts.model.dto.ChildAlertDTO;
 import com.safetynet.alerts.model.dto.CountAndPersonsCoveredDTO;
 import com.safetynet.alerts.model.dto.FloodDTO;
 import com.safetynet.alerts.model.dto.PersonFireDTO;
-import com.safetynet.alerts.model.dto.PersonsCoveredByStationDTO;
+import com.safetynet.alerts.model.dto.PersonInfoDTO;
 import com.safetynet.alerts.repository.PersonRepository;
-import com.safetynet.alerts.util.AgeCalculator;
+import com.safetynet.alerts.util.AgeCountCalculator;
 import com.safetynet.alerts.util.Mapping;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -27,7 +27,7 @@ public class PersonService {
     private PersonRepository personRepository;
 
     @Autowired
-    private AgeCalculator ageCountCalculator;
+    private AgeCountCalculator ageCountCalculator;
 
     @Autowired
     private Mapping mapping;
@@ -35,17 +35,21 @@ public class PersonService {
     @Autowired
     private FirestationService firestationService;
 
+    @Autowired
+    private MedicalRecordService medicalRecordService;
+
     private static final Logger LOGGER = LogManager.getLogger(
             PersonService.class);
 
-    public PersonService(PersonRepository personRepository,
+    //TODO: fix bean cycle with constructor injection
+    /*public PersonService(PersonRepository personRepository,
             AgeCalculator ageCountCalculator, Mapping mapping,
             FirestationService firestationService) {
         this.personRepository = personRepository;
         this.ageCountCalculator = ageCountCalculator;
         this.mapping = mapping;
         this.firestationService = firestationService;
-    }
+    }*/
 
     public Iterable<Person> findAll() {
         return personRepository.findAll();
@@ -95,7 +99,7 @@ public class PersonService {
             String lastName) {
         LOGGER.debug("PersonService -> Searching for person " + firstName + " "
                 + lastName + " ...");
-        List<Person> persons = (List<Person>) personRepository.findPersonByFirstNameAndLastName(
+        List<Person> persons = (List<Person>) personRepository.findPersonsByFirstNameAndLastName(
                 firstName, lastName);
 
         if (persons.isEmpty()) {
@@ -181,37 +185,33 @@ public class PersonService {
         }
         LOGGER.info("PersonsCoveredByStationService  -> " + persons.size()
                 + " persons found.");
-        return mapping.convertPersonListToCountAndPersonsCoveredDTO(persons);
-    }
+        List<MedicalRecord> medicalRecords = new ArrayList<>();
 
-    public Date findDateByFirstNameAndLastName(String firstName,
-            String lastName) {
-        return personRepository.findDateByFirstNameAndLastName(firstName,
-                lastName);
-    }
-
-    public int getAge(String firstName, String lastName) {
-        Date dateOfBirth = findDateByFirstNameAndLastName(firstName, lastName);
-        return ageCountCalculator.calculateAge(dateOfBirth);
-    }
-
-    public int countNumberOfChildren(List<PersonsCoveredByStationDTO> persons) {
-        int countOfChildren = 0;
-        for (PersonsCoveredByStationDTO person : persons) {
-            if (person.getAge() <= 18)
-                countOfChildren++;
+        for (Person person : persons) {
+            MedicalRecord medicalRecord = medicalRecordService.findByFirstNameAndLastName(
+                    person.getFirstName(), person.getLastName());
+            medicalRecords.add(medicalRecord);
         }
-        return countOfChildren;
+        CountAndPersonsCoveredDTO countAndPersonsCoveredDTO = mapping.convertPersonListToCountAndPersonsCoveredDTO(
+                persons, medicalRecords);
+        return countAndPersonsCoveredDTO;
     }
+
 
     public List<PersonFireDTO> getFireDtoListByStation(String address) {
         List<PersonFireDTO> personFireDTOList = null;
         List<Integer> listOfStations = firestationService.findStationByAddress(
                 address);
+        List<MedicalRecord> medicalRecords = new ArrayList<>();
         for (Integer integer : listOfStations) {
             List<Person> personsCovered = findPersonByStation(integer);
+            for (Person person : personsCovered) {
+                MedicalRecord medicalRecord = medicalRecordService.findByFirstNameAndLastName(
+                        person.getFirstName(), person.getLastName());
+                medicalRecords.add(medicalRecord);
+            }
             personFireDTOList = mapping.convertPersonListToPersonFireList(
-                    personsCovered, integer);
+                    personsCovered, integer, medicalRecords);
         }
 
         return personFireDTOList;
@@ -225,10 +225,16 @@ public class PersonService {
                     .findByStation(integer);
 
             for (String firestationAddress : firestationAddresses) {
+                List<MedicalRecord> medicalRecords = new ArrayList<>();
                 List<Person> personsCovered = findPersonByAddress(
                         firestationAddress);
+                for (Person person : personsCovered) {
+                    MedicalRecord medicalRecord = medicalRecordService.findByFirstNameAndLastName(
+                            person.getFirstName(), person.getLastName());
+                    medicalRecords.add(medicalRecord);
+                }
                 AddressDTO addressDTO = mapping.createAddressDto(
-                        firestationAddress, personsCovered);
+                        firestationAddress, personsCovered, medicalRecords);
                 addressDtoList.add(addressDTO);
             }
 
@@ -241,13 +247,30 @@ public class PersonService {
 
     public ChildAlertDTO getListOfChildrenByAddress(final String address) {
         List<Person> personByAddressList = findPersonByAddress(address);
+        List<MedicalRecord> medicalRecords = new ArrayList<>();
+        for (Person person : personByAddressList) {
+            MedicalRecord medicalRecord = medicalRecordService.findByFirstNameAndLastName(
+                    person.getFirstName(), person.getLastName());
+            medicalRecords.add(medicalRecord);
+        }
         ChildAlertDTO childAlertDTO = mapping.createChildAlertDto(
-                personByAddressList);
+                personByAddressList, medicalRecords);
         LOGGER.info(
                 "PersonService -> " + childAlertDTO.getChildren().size() + " "
                         + "children found / " + childAlertDTO.getAdults().size()
                         + " adults " + "founds");
         return childAlertDTO;
+    }
+
+    public List<PersonInfoDTO> getPersonInfoList(String firstName,
+            String lastName) {
+        List<Person> personList = findPersonsByFirstNameAndLastName(firstName,
+                lastName);
+        List<MedicalRecord> medicalRecordList = medicalRecordService.findMedicalRecordsByFirstNameAndLastName(
+                firstName, lastName);
+        List<PersonInfoDTO> personInfoDTOList = mapping.convertPersonListToPersonInfoDtoList(
+                personList, medicalRecordList);
+        return personInfoDTOList;
     }
 
     public List<Person> getMailAddressesFromCity(String city) {

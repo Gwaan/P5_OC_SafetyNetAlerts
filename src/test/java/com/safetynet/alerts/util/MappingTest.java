@@ -1,4 +1,4 @@
-package com.safetynet.alerts.util;
+/*package com.safetynet.alerts.util;
 
 
 import com.safetynet.alerts.model.Person;
@@ -201,3 +201,4 @@ public class MappingTest {
 
 
 }
+*/

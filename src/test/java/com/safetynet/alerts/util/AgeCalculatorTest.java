@@ -8,11 +8,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AgeCalculatorTest {
 
-    private AgeCalculator ageCountCalculator;
+    private AgeCountCalculator ageCountCalculator;
 
     @BeforeEach
     public void setUpPerTest() {
-        ageCountCalculator = new AgeCalculator();
+        ageCountCalculator = new AgeCountCalculator();
     }
 
     @AfterEach

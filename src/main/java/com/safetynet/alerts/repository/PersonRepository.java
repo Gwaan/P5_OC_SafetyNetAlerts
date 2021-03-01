@@ -13,7 +13,7 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
 
     Person findByFirstNameAndLastName(String firstName, String lastName);
 
-    Iterable<Person> findPersonByFirstNameAndLastName(String firstName,
+    Iterable<Person> findPersonsByFirstNameAndLastName(String firstName,
             String lastName);
 
     boolean existsPersonsByFirstNameAndLastName(String firstName,
@@ -42,10 +42,6 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
             + "FROM Person p, Firestation f WHERE f.station = :stationNumber"
             + " AND p.address = f.address")
     Iterable<Person> findPersonsWithStationNumber(int stationNumber);
-
-    @Query(value = "SELECT m.birthDate FROM MedicalRecord m WHERE m.firstName"
-            + " = " + " :firstName AND m.lastName = :lastName")
-    Date findDateByFirstNameAndLastName(String firstName, String lastName);
 
 
 }

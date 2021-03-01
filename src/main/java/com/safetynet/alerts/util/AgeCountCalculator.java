@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 @Component
-public class AgeCalculator {
+public class AgeCountCalculator {
 
     public int calculateAge(Date birthDate) {
         LocalDate currentDate = LocalDate.now();
@@ -27,6 +27,14 @@ public class AgeCalculator {
         }
     }
 
+    public int countNumberOfChildren(List<PersonsCoveredByStationDTO> persons) {
+        int countOfChildren = 0;
+        for (PersonsCoveredByStationDTO person : persons) {
+            if (person.getAge() <= 18)
+                countOfChildren++;
+        }
+        return countOfChildren;
+    }
 
 
 }

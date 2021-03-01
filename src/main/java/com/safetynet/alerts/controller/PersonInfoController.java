@@ -27,12 +27,10 @@ public class PersonInfoController {
     @GetMapping("/personInfo")
     public List<PersonInfoDTO> getPersonInfos(@RequestParam String firstName,
             @RequestParam String lastName) {
-        List<Person> personsList = personService.findPersonsByFirstNameAndLastName(
-                firstName, lastName);
 
         LOGGER.info("PersonInfoController (GET) -> Getting person infos for"
                 + firstName + " " + lastName);
         //TODO: call service instead of mapping
-        return personMapping.convertPersonListToPersonInfoDtoList(personsList);
+        return personService.getPersonInfoList(firstName, lastName);
     }
 }

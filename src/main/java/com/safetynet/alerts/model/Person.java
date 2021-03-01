@@ -79,5 +79,4 @@ public class Person {
     @Column(name = "email")
     private String email;
 
-
 }
