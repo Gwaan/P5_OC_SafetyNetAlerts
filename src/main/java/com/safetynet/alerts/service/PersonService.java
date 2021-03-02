@@ -141,14 +141,6 @@ public class PersonService {
         return personsByAddress;
     }
 
-    public List<Person> findPersonsByAddresses(List<String> addresses) {
-        return (List<Person>) personRepository.findPersonByAddress(addresses);
-    }
-
-    //TODO: rename method
-
-    //TODO: refactor code
-
     public List<Person> findPersonByStation(int station) {
         List<Person> personFound = (List<Person>) personRepository.findPersonByStation(
                 station);

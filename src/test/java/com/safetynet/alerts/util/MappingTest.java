@@ -10,27 +10,19 @@ import com.safetynet.alerts.model.dto.FloodDTO;
 import com.safetynet.alerts.model.dto.PersonFireDTO;
 import com.safetynet.alerts.model.dto.PersonInfoDTO;
 import com.safetynet.alerts.model.dto.PersonsCoveredByStationDTO;
-import com.safetynet.alerts.service.FirestationService;
-import com.safetynet.alerts.service.MedicalRecordService;
-import com.safetynet.alerts.service.PersonService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import javax.validation.constraints.AssertTrue;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -206,13 +198,10 @@ public class MappingTest {
 
     @Test
     public void should_Return_A_FloodDTO_Object() {
-        // ARRANGE
         List<AddressDTO> addressDTOList = new ArrayList<>();
 
-        // ACT
         FloodDTO floodDTO = mapping.createFloodDTO(1, addressDTOList);
 
-        // ASSERT
         assertTrue(floodDTO instanceof FloodDTO);
     }
 
