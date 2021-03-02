@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AgeCalculatorTest {
+public class AgeCountCalculatorTest {
 
     private AgeCountCalculator ageCountCalculator;
 
