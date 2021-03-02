@@ -52,8 +52,8 @@ public class Mapping {
         persDto.setCity(person.getCity());
         persDto.setZip(person.getZip());
         persDto.setPhone(person.getPhone());
-        persDto.setAge(
-                ageCountCalculator.calculateAge(medicalRecord.getBirthDate()));
+        persDto.setAge(medicalRecord != null ? ageCountCalculator.calculateAge(
+                medicalRecord.getBirthDate()) : 404);
         return persDto;
     }
 
@@ -75,15 +75,20 @@ public class Mapping {
     }
 
     public PersonInfoDTO convertPersonToPersonInfoDto(final Person person,
-                                                      final MedicalRecord medicalRecord) {
+            final MedicalRecord medicalRecord) {
         PersonInfoDTO personInfoDTO = new PersonInfoDTO();
         personInfoDTO.setFirstName(person.getFirstName());
         personInfoDTO.setLastName(person.getLastName());
         personInfoDTO.setPhone(person.getPhone());
         personInfoDTO.setAge(
-                ageCountCalculator.calculateAge(medicalRecord.getBirthDate()));
-        personInfoDTO.setAllergies(medicalRecord.getAllergies());
-        personInfoDTO.setMedications(medicalRecord.getMedications());
+                medicalRecord != null ? ageCountCalculator.calculateAge(
+                        medicalRecord.getBirthDate()) : 404);
+        personInfoDTO.setAllergies(
+                medicalRecord != null ? medicalRecord.getAllergies()
+                        : new String[]{"No medical record found"});
+        personInfoDTO.setMedications(
+                medicalRecord != null ? medicalRecord.getMedications()
+                        : new String[]{"No medical record found"});
         return personInfoDTO;
     }
 
@@ -106,15 +111,20 @@ public class Mapping {
     }
 
     public PersonFireDTO convertPersonToPersonFireDto(final Person person,
-                                                      final MedicalRecord medicalRecord) {
+            final MedicalRecord medicalRecord) {
         PersonFireDTO personFireDTO = new PersonFireDTO();
         personFireDTO.setFirstName(person.getFirstName());
         personFireDTO.setLastName(person.getLastName());
         personFireDTO.setPhone(person.getPhone());
         personFireDTO.setAge(
-                ageCountCalculator.calculateAge(medicalRecord.getBirthDate()));
-        personFireDTO.setAllergies(medicalRecord.getAllergies());
-        personFireDTO.setMedications(medicalRecord.getMedications());
+                medicalRecord != null ? ageCountCalculator.calculateAge(
+                        medicalRecord.getBirthDate()) : 404);
+        personFireDTO.setAllergies(
+                medicalRecord != null ? medicalRecord.getAllergies()
+                        : new String[]{"No medical record found"});
+        personFireDTO.setMedications(
+                medicalRecord != null ? medicalRecord.getMedications()
+                        : new String[]{"No medical record found"});
         return personFireDTO;
     }
 
@@ -139,7 +149,7 @@ public class Mapping {
     }
 
     public ChildAlertDTO createChildAlertDto(final List<Person> personList,
-                                             final List<MedicalRecord> medicalRecords) {
+            final List<MedicalRecord> medicalRecords) {
         ChildAlertDTO childAlertDTO = new ChildAlertDTO();
         List<PersonsCoveredByStationDTO> personsCoveredByStationDTOList = convertPersonListToPersonsCoveredByStationDtoList(
                 personList, medicalRecords);
@@ -149,8 +159,8 @@ public class Mapping {
         for (PersonsCoveredByStationDTO person : personsCoveredByStationDTOList) {
             MedicalRecord medicalRecord = mapMedicalRecordsWithPersonCoveredByStationDTO(
                     person, medicalRecords);
-            int age = ageCountCalculator.calculateAge(
-                    medicalRecord.getBirthDate());
+            int age = medicalRecord != null ? ageCountCalculator.calculateAge(
+                    medicalRecord.getBirthDate()) : 404;
             if (age <= 18) {
                 children.add(person);
             } else {
@@ -165,8 +175,8 @@ public class Mapping {
 
 
     public AddressDTO createAddressDto(final String address,
-                                       final List<Person> personInfoDTOList,
-                                       final List<MedicalRecord> medicalRecords) {
+            final List<Person> personInfoDTOList,
+            final List<MedicalRecord> medicalRecords) {
         AddressDTO addressDTO = new AddressDTO();
         addressDTO.setHouseHold(address);
         addressDTO.setPersonInfoList(
@@ -178,7 +188,7 @@ public class Mapping {
     }
 
     public FloodDTO createFloodDTO(final Integer station,
-                                   final List<AddressDTO> addressDTOList) {
+            final List<AddressDTO> addressDTOList) {
         FloodDTO floodDTO = new FloodDTO();
         floodDTO.setStation(station);
         floodDTO.setHouseHoldCovered(addressDTOList);
@@ -204,7 +214,7 @@ public class Mapping {
     }
 
     public MedicalRecord mapMedicalRecordsWithPerson(Person person,
-                                                     List<MedicalRecord> medicalRecords) {
+            List<MedicalRecord> medicalRecords) {
         MedicalRecord medicalRecordToReturn = null;
         for (MedicalRecord medicalRecord : medicalRecords) {
             if (person

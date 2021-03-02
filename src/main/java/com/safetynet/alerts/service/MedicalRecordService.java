@@ -54,24 +54,28 @@ public class MedicalRecordService {
     }
 
     public MedicalRecord findByFirstNameAndLastName(String firstName,
-                                                    String lastName) {
+            String lastName) {
         try {
-            LOGGER.debug("MedicalRecordService -> Searching for person " + firstName
-                    + " " + lastName + " ...");
+            LOGGER.debug(
+                    "MedicalRecordService -> Searching for person " + firstName
+                            + " " + lastName + " ...");
             MedicalRecord medicalRecord = medicalRecordRepository.findByFirstNameAndLastName(
                     firstName, lastName);
             if (medicalRecord == null) {
-                LOGGER.error("MedicalRecordService -> " + firstName + " " + lastName
-                        + " doesn't exist");
+                LOGGER.error(
+                        "MedicalRecordService -> " + firstName + " " + lastName
+                                + " doesn't exist");
                 throw new NotFoundException(
-                        "Person " + firstName + " " + lastName + " doesn't exist");
+                        "Person " + firstName + " " + lastName
+                                + " doesn't exist");
             }
             LOGGER.info(
-                    "MedicalRecordService -> Medical record for " + firstName + " "
-                            + lastName + " was found");
+                    "MedicalRecordService -> Medical record for " + firstName
+                            + " " + lastName + " was found");
             return medicalRecord;
         } catch (NotFoundException e) {
-            return null;
+            return new MedicalRecord(null, "", "", null, new String[]{""},
+                    new String[]{""});
         }
 
     }
@@ -99,7 +103,7 @@ public class MedicalRecordService {
     }
 
     public MedicalRecord updateMedicalRecord(MedicalRecord medicalRecordBody,
-                                             MedicalRecord medicalRecordUpdated) {
+            MedicalRecord medicalRecordUpdated) {
 
         medicalRecordUpdated.setBirthDate(medicalRecordBody.getBirthDate());
         medicalRecordUpdated.setMedications(medicalRecordBody.getMedications());
@@ -109,13 +113,13 @@ public class MedicalRecordService {
     }
 
     public boolean existsMedicalRecordByFirstNameAndLastName(String firstName,
-                                                             String lastName) {
+            String lastName) {
         return medicalRecordRepository.existsMedicalRecordByFirstNameAndLastName(
                 firstName, lastName);
     }
 
     public Date findDateByFirstNameAndLastName(String firstName,
-                                               String lastName) {
+            String lastName) {
         return medicalRecordRepository.findDateByFirstNameAndLastName(firstName,
                 lastName);
     }
