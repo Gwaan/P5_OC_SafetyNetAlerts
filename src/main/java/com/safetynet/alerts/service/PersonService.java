@@ -33,8 +33,8 @@ public class PersonService {
     private MedicalRecordService medicalRecordService;
 
     public PersonService(PersonRepository personRepository, Mapping mapping,
-                         FirestationService firestationService,
-                         MedicalRecordService medicalRecordService) {
+            FirestationService firestationService,
+            MedicalRecordService medicalRecordService) {
         this.personRepository = personRepository;
         this.mapping = mapping;
         this.firestationService = firestationService;
@@ -72,7 +72,7 @@ public class PersonService {
     }
 
     public Person findByFirstNameAndLastName(String firstName,
-                                             String lastName) {
+            String lastName) {
         LOGGER.debug("PersonService -> Searching for person " + firstName + " "
                 + lastName + " ...");
         Person person = personRepository.findByFirstNameAndLastName(firstName,
@@ -90,7 +90,7 @@ public class PersonService {
     }
 
     public List<Person> findPersonsByFirstNameAndLastName(String firstName,
-                                                          String lastName) {
+            String lastName) {
         LOGGER.debug("PersonService -> Searching for person " + firstName + " "
                 + lastName + " ...");
         List<Person> persons = (List<Person>) personRepository.findPersonsByFirstNameAndLastName(
@@ -123,7 +123,7 @@ public class PersonService {
     }
 
     public boolean existsPersonByFirstNameAndLastName(String firstName,
-                                                      String lastName) {
+            String lastName) {
         return personRepository.existsPersonsByFirstNameAndLastName(firstName,
                 lastName);
     }
@@ -185,7 +185,7 @@ public class PersonService {
 
 
     public List<PersonFireDTO> getFireDtoListByStation(String address) {
-        List<PersonFireDTO> personFireDTOList = null;
+        List<PersonFireDTO> personFireDTOList = new ArrayList<>();
         List<Integer> listOfStations = firestationService.findStationByAddress(
                 address);
         List<MedicalRecord> medicalRecords = new ArrayList<>();
@@ -197,8 +197,10 @@ public class PersonService {
                 if (medicalRecord != null)
                     medicalRecords.add(medicalRecord);
             }
-            personFireDTOList = mapping.convertPersonListToPersonFireList(
+            List<PersonFireDTO> personFireDTOListToAdd = mapping.convertPersonListToPersonFireList(
                     personsCovered, integer, medicalRecords);
+            personFireDTOList.addAll(personFireDTOListToAdd);
+
         }
 
         return personFireDTOList;
@@ -250,7 +252,7 @@ public class PersonService {
     }
 
     public List<PersonInfoDTO> getPersonInfoList(String firstName,
-                                                 String lastName) {
+            String lastName) {
         List<Person> personList = findPersonsByFirstNameAndLastName(firstName,
                 lastName);
         List<MedicalRecord> medicalRecordList = medicalRecordService.findMedicalRecordsByFirstNameAndLastName(
