@@ -11,7 +11,9 @@ import com.safetynet.alerts.model.dto.PersonInfoDTO;
 import com.safetynet.alerts.model.dto.PersonsCoveredByStationDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -73,7 +75,7 @@ public class Mapping {
     }
 
     public PersonInfoDTO convertPersonToPersonInfoDto(final Person person,
-            final MedicalRecord medicalRecord) {
+                                                      final MedicalRecord medicalRecord) {
         PersonInfoDTO personInfoDTO = new PersonInfoDTO();
         personInfoDTO.setFirstName(person.getFirstName());
         personInfoDTO.setLastName(person.getLastName());
@@ -104,7 +106,7 @@ public class Mapping {
     }
 
     public PersonFireDTO convertPersonToPersonFireDto(final Person person,
-            final MedicalRecord medicalRecord) {
+                                                      final MedicalRecord medicalRecord) {
         PersonFireDTO personFireDTO = new PersonFireDTO();
         personFireDTO.setFirstName(person.getFirstName());
         personFireDTO.setLastName(person.getLastName());
@@ -137,7 +139,7 @@ public class Mapping {
     }
 
     public ChildAlertDTO createChildAlertDto(final List<Person> personList,
-            final List<MedicalRecord> medicalRecords) {
+                                             final List<MedicalRecord> medicalRecords) {
         ChildAlertDTO childAlertDTO = new ChildAlertDTO();
         List<PersonsCoveredByStationDTO> personsCoveredByStationDTOList = convertPersonListToPersonsCoveredByStationDtoList(
                 personList, medicalRecords);
@@ -163,8 +165,8 @@ public class Mapping {
 
 
     public AddressDTO createAddressDto(final String address,
-            final List<Person> personInfoDTOList,
-            final List<MedicalRecord> medicalRecords) {
+                                       final List<Person> personInfoDTOList,
+                                       final List<MedicalRecord> medicalRecords) {
         AddressDTO addressDTO = new AddressDTO();
         addressDTO.setHouseHold(address);
         addressDTO.setPersonInfoList(
@@ -176,7 +178,7 @@ public class Mapping {
     }
 
     public FloodDTO createFloodDTO(final Integer station,
-            final List<AddressDTO> addressDTOList) {
+                                   final List<AddressDTO> addressDTOList) {
         FloodDTO floodDTO = new FloodDTO();
         floodDTO.setStation(station);
         floodDTO.setHouseHoldCovered(addressDTOList);
@@ -202,7 +204,7 @@ public class Mapping {
     }
 
     public MedicalRecord mapMedicalRecordsWithPerson(Person person,
-            List<MedicalRecord> medicalRecords) {
+                                                     List<MedicalRecord> medicalRecords) {
         MedicalRecord medicalRecordToReturn = null;
         for (MedicalRecord medicalRecord : medicalRecords) {
             if (person

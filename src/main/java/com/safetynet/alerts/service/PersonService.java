@@ -17,6 +17,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,8 +33,8 @@ public class PersonService {
     private MedicalRecordService medicalRecordService;
 
     public PersonService(PersonRepository personRepository, Mapping mapping,
-            FirestationService firestationService,
-            MedicalRecordService medicalRecordService) {
+                         FirestationService firestationService,
+                         MedicalRecordService medicalRecordService) {
         this.personRepository = personRepository;
         this.mapping = mapping;
         this.firestationService = firestationService;
@@ -71,7 +72,7 @@ public class PersonService {
     }
 
     public Person findByFirstNameAndLastName(String firstName,
-            String lastName) {
+                                             String lastName) {
         LOGGER.debug("PersonService -> Searching for person " + firstName + " "
                 + lastName + " ...");
         Person person = personRepository.findByFirstNameAndLastName(firstName,
@@ -89,7 +90,7 @@ public class PersonService {
     }
 
     public List<Person> findPersonsByFirstNameAndLastName(String firstName,
-            String lastName) {
+                                                          String lastName) {
         LOGGER.debug("PersonService -> Searching for person " + firstName + " "
                 + lastName + " ...");
         List<Person> persons = (List<Person>) personRepository.findPersonsByFirstNameAndLastName(
@@ -122,7 +123,7 @@ public class PersonService {
     }
 
     public boolean existsPersonByFirstNameAndLastName(String firstName,
-            String lastName) {
+                                                      String lastName) {
         return personRepository.existsPersonsByFirstNameAndLastName(firstName,
                 lastName);
     }
@@ -193,7 +194,8 @@ public class PersonService {
             for (Person person : personsCovered) {
                 MedicalRecord medicalRecord = medicalRecordService.findByFirstNameAndLastName(
                         person.getFirstName(), person.getLastName());
-                medicalRecords.add(medicalRecord);
+                if (medicalRecord != null)
+                    medicalRecords.add(medicalRecord);
             }
             personFireDTOList = mapping.convertPersonListToPersonFireList(
                     personsCovered, integer, medicalRecords);
@@ -248,7 +250,7 @@ public class PersonService {
     }
 
     public List<PersonInfoDTO> getPersonInfoList(String firstName,
-            String lastName) {
+                                                 String lastName) {
         List<Person> personList = findPersonsByFirstNameAndLastName(firstName,
                 lastName);
         List<MedicalRecord> medicalRecordList = medicalRecordService.findMedicalRecordsByFirstNameAndLastName(
