@@ -17,6 +17,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -184,7 +185,7 @@ public class PersonService {
 
 
     public List<PersonFireDTO> getFireDtoListByStation(String address) {
-        List<PersonFireDTO> personFireDTOList = null;
+        List<PersonFireDTO> personFireDTOList = new ArrayList<>();
         List<Integer> listOfStations = firestationService.findStationByAddress(
                 address);
         List<MedicalRecord> medicalRecords = new ArrayList<>();
@@ -193,10 +194,13 @@ public class PersonService {
             for (Person person : personsCovered) {
                 MedicalRecord medicalRecord = medicalRecordService.findByFirstNameAndLastName(
                         person.getFirstName(), person.getLastName());
-                medicalRecords.add(medicalRecord);
+                if (medicalRecord != null)
+                    medicalRecords.add(medicalRecord);
             }
-            personFireDTOList = mapping.convertPersonListToPersonFireList(
+            List<PersonFireDTO> personFireDTOListToAdd = mapping.convertPersonListToPersonFireList(
                     personsCovered, integer, medicalRecords);
+            personFireDTOList.addAll(personFireDTOListToAdd);
+
         }
 
         return personFireDTOList;
