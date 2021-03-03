@@ -136,6 +136,14 @@ public class MappingTest {
     }
 
     @Test
+    public void should_Not_Display_MedicalRecord_If_Its_Null_For_PersonInfoDTO() {
+        PersonInfoDTO personInfoDTO = mapping.convertPersonToPersonInfoDto(
+                person, null);
+
+        assertEquals(404, personInfoDTO.getAge());
+    }
+
+    @Test
     public void should_Return_A_PersonFireDTO_List() {
         List<PersonFireDTO> personFireDTOList = mapping.convertPersonListToPersonFireList(
                 personList, 1, medicalRecordList);
@@ -158,6 +166,14 @@ public class MappingTest {
         assertEquals(medicalRecord.getAllergies(),
                 personFireDTO.getAllergies());
         verify(ageCountCalculator, times(1)).calculateAge(any());
+    }
+
+    @Test
+    public void should_Not_Display_MedicalRecord_If_Its_Null_For_PersonFireDTO() {
+        PersonFireDTO personFireDTO = mapping.convertPersonToPersonFireDto(
+                person, null);
+
+        assertEquals(404, personFireDTO.getAge());
     }
 
     @Test
