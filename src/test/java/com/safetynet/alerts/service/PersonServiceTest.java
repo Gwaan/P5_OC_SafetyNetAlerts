@@ -58,9 +58,9 @@ public class PersonServiceTest {
 
     private static List<Integer> listOfIntegers;
 
-    private MedicalRecord medicalRecord;
+    private static MedicalRecord medicalRecord;
 
-    private List<Person> emptyList;
+    private static List<Person> emptyList;
 
 
     @BeforeEach
@@ -147,7 +147,7 @@ public class PersonServiceTest {
     }
 
     @Test
-    public void should_Save_A_List_Of_Person() {
+    public void should_Save_A_List_Of_Person_Saved_In_Db() {
         when(personRepository.saveAll(personList)).thenReturn(personList);
 
         List<Person> expectedList = (List<Person>) personService.saveAll(
@@ -196,7 +196,6 @@ public class PersonServiceTest {
 
     @Test
     public void should_Throws_NotFoundException_When_List_Of_Persons_By_FirstName_And_FirstName_Is_Empty() {
-        List<Person> emptyList = new ArrayList<>();
         when(personRepository.findPersonsByFirstNameAndLastName(anyString(),
                 anyString())).thenReturn(emptyList);
         assertThrows(NotFoundException.class,
@@ -213,6 +212,12 @@ public class PersonServiceTest {
 
     @Test
     public void should_Update_Person_From_Db() {
+        Person personToUpdate = new Person();
+        personToUpdate.setAddress("test");
+        personToUpdate.setCity("test");
+        personToUpdate.setEmail("test@test.test");
+        personToUpdate.setPhone("test");
+        personToUpdate.setZip(56789);
         Person personFromBody = new Person();
         personFromBody.setAddress("12345 Test");
         personFromBody.setCity("city test");
@@ -221,7 +226,7 @@ public class PersonServiceTest {
         personFromBody.setZip(54321);
 
         Person personUpdated = personService.updatePerson(personFromBody,
-                personFromBody);
+                personToUpdate);
 
         assertEquals(personUpdated.getAddress(), personFromBody.getAddress());
         assertEquals(personUpdated.getCity(), personFromBody.getCity());

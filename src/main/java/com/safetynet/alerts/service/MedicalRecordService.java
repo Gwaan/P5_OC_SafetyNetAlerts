@@ -118,11 +118,5 @@ public class MedicalRecordService {
                 firstName, lastName);
     }
 
-    public Date findDateByFirstNameAndLastName(String firstName,
-            String lastName) {
-        return medicalRecordRepository.findDateByFirstNameAndLastName(firstName,
-                lastName);
-    }
-
 
 }
