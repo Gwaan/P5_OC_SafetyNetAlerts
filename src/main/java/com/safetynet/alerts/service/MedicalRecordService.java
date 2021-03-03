@@ -26,7 +26,7 @@ public class MedicalRecordService {
         this.medicalRecordRepository = medicalRecordRepository;
     }
 
-    public Iterable<MedicalRecord> list() {
+    public Iterable<MedicalRecord> findAll() {
         return medicalRecordRepository.findAll();
     }
 

@@ -19,6 +19,18 @@ import javax.validation.constraints.NotNull;
 @Table(name = "firestations")
 public class Firestation {
 
+    public Firestation() {
+    }
+
+    public Firestation(Long id, @NotNull(
+            message = "Station number cannot be empty") Integer station,
+            @NotBlank(
+                    message = "Addresse field cannot be empty") String address) {
+        this.id = id;
+        this.station = station;
+        this.address = address;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

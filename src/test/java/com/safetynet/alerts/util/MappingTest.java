@@ -191,7 +191,7 @@ public class MappingTest {
     }
 
     @Test
-    public void should_Return_A_ChildAlertDTO_Object() {
+    public void should_Return_A_ChildAlertDTO_Object_Filled_With_Children() {
         when(ageCountCalculator.calculateAge(any(Date.class))).thenReturn(18);
 
         ChildAlertDTO childAlertDTO = mapping.createChildAlertDto(personList,
@@ -200,6 +200,18 @@ public class MappingTest {
         assertTrue(childAlertDTO instanceof ChildAlertDTO);
         assertEquals(3, childAlertDTO.getChildren().size());
         assertEquals(0, childAlertDTO.getAdults().size());
+        verify(ageCountCalculator, times(6)).calculateAge(any());
+    }
+    @Test
+    public void should_Return_A_ChildAlertDTO_Object_Filled_With_Adults() {
+        when(ageCountCalculator.calculateAge(any(Date.class))).thenReturn(20);
+
+        ChildAlertDTO childAlertDTO = mapping.createChildAlertDto(personList,
+                medicalRecordList);
+
+        assertTrue(childAlertDTO instanceof ChildAlertDTO);
+        assertEquals(0, childAlertDTO.getChildren().size());
+        assertEquals(3, childAlertDTO.getAdults().size());
         verify(ageCountCalculator, times(6)).calculateAge(any());
     }
 

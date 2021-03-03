@@ -3,7 +3,6 @@ package com.safetynet.alerts.service;
 import com.safetynet.alerts.exceptions.AlreadyExistingException;
 import com.safetynet.alerts.exceptions.NotFoundException;
 import com.safetynet.alerts.model.MedicalRecord;
-import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.repository.MedicalRecordRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +16,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
@@ -70,7 +68,7 @@ public class MedicalRecordServiceTest {
     public void should_Return_All_Medical_Records_From_Db() {
         when(medicalRecordRepository.findAll()).thenReturn(medicalRecordList);
 
-        medicalRecordService.list();
+        medicalRecordService.findAll();
 
         verify(medicalRecordRepository, times(1)).findAll();
 
@@ -132,6 +130,17 @@ public class MedicalRecordServiceTest {
 
         verify(medicalRecordRepository, times(1)).findByFirstNameAndLastName(
                 anyString(), anyString());
+        assertEquals(medicalRecord, medicalRecordExpected);
+    }
+
+    @Test
+    public void should_Return_A_MedicalRecord_When_NotFoundException_Is_Catch() {
+        MedicalRecord medicalRecord = new MedicalRecord(null, "", "", null,
+                new String[]{""}, new String[]{""});
+
+        MedicalRecord medicalRecordExpected = medicalRecordService.findByFirstNameAndLastName(
+                "test", "test");
+
         assertEquals(medicalRecord, medicalRecordExpected);
     }
 
