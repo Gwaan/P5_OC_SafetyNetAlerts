@@ -49,10 +49,6 @@ public class PersonController {
     public ResponseEntity<Void> addPerson(
             @Valid @RequestBody final Person person) {
         Person personToSave = personService.save(person);
-
-        if (personToSave == null) {
-            return ResponseEntity.noContent().build();
-        }
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
