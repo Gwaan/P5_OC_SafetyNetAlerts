@@ -1,25 +1,27 @@
 package com.safetynet.alerts.service;
 
+import com.safetynet.alerts.exceptions.AlreadyExistingException;
 import com.safetynet.alerts.exceptions.NotFoundException;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
+import com.safetynet.alerts.model.dto.AddressDTO;
+import com.safetynet.alerts.model.dto.ChildAlertDTO;
 import com.safetynet.alerts.model.dto.CountAndPersonsCoveredDTO;
+import com.safetynet.alerts.model.dto.FloodDTO;
 import com.safetynet.alerts.model.dto.PersonFireDTO;
+import com.safetynet.alerts.model.dto.PersonInfoDTO;
+import com.safetynet.alerts.model.dto.PersonsCoveredByStationDTO;
 import com.safetynet.alerts.repository.PersonRepository;
 import com.safetynet.alerts.util.Mapping;
-import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import static org.hamcrest.Matchers.any;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -27,13 +29,11 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-//@ExtendWith(MockitoExtension.class)
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class PersonServiceTest {
 
     private PersonService personService;
@@ -60,11 +60,15 @@ public class PersonServiceTest {
 
     private MedicalRecord medicalRecord;
 
+    private List<Person> emptyList;
+
+
     @BeforeEach
     void beforeEach() {
         personList = new ArrayList<>();
         medicalRecordList = new ArrayList<>();
         listOfIntegers = new ArrayList<>();
+        emptyList = new ArrayList<>();
         listOfIntegers.add(1);
         listOfIntegers.add(2);
         personService = new PersonService(personRepository, mapping,
@@ -98,6 +102,7 @@ public class PersonServiceTest {
         medicalRecord = null;
         medicalRecordList = null;
         listOfIntegers = null;
+        emptyList = null;
     }
 
     @Test
@@ -107,6 +112,18 @@ public class PersonServiceTest {
         personService.findAll();
 
         verify(personRepository, times(1)).findAll();
+    }
+
+    @Test
+    public void should_Throw_AlreadyExistingException_If_Person_To_Save_Is_Existing() {
+        when(personRepository.existsPersonsByFirstNameAndLastName(anyString(),
+                anyString())).thenReturn(true);
+        Person personExisting = new Person();
+        personExisting.setFirstName("John");
+        personExisting.setLastName("Boyd");
+
+        assertThrows(AlreadyExistingException.class,
+                () -> personService.save(personExisting));
     }
 
     @Test
@@ -240,7 +257,6 @@ public class PersonServiceTest {
 
     @Test
     public void should_Throws_NotFoundException_When_No_Person_With_Address_Is_Found() {
-        List<Person> emptyList = new ArrayList<>();
         when(personRepository.findPersonByAddress(anyString())).thenReturn(
                 emptyList);
         assertThrows(NotFoundException.class,
@@ -259,9 +275,12 @@ public class PersonServiceTest {
     }
 
     @Test
-    public void should_Throws_NoFoundException_When_No_Person_With_Station_Is_Found() {
+    public void should_Throws_NotFoundException_When_No_Person_With_Station_Is_Found() {
+        List<Person> emptyList = new ArrayList<>();
+        when(personRepository.findPersonByStation(anyInt())).thenReturn(
+                emptyList);
         assertThrows(NotFoundException.class,
-                () -> personService.findPersonsWithStationNumber(1));
+                () -> personService.findPersonByStation(1));
     }
 
     @Test
@@ -278,16 +297,130 @@ public class PersonServiceTest {
                 countAndPersonsCoveredDTO instanceof CountAndPersonsCoveredDTO);
     }
 
-    /*@Test
+    @Test
     public void should_Return_A_PersonFireDTO_List() {
         List<PersonFireDTO> personFireDTOList = new ArrayList<>();
+        personFireDTOList.add(new PersonFireDTO());
         when(firestationService.findStationByAddress(anyString())).thenReturn(
                 listOfIntegers);
+        when(personRepository.findPersonByStation(anyInt())).thenReturn(
+                personList);
+        when(mapping.convertPersonListToPersonFireList(anyList(), anyInt(),
+                anyList())).thenReturn(personFireDTOList);
 
         List<PersonFireDTO> personFireDTOListExpected = personService.getFireDtoListByStation(
                 "test");
 
-        assertTrue(personFireDTOList.get(0) instanceof PersonFireDTO);
-    }*/
+        assertTrue(personFireDTOListExpected.get(0) instanceof PersonFireDTO);
+    }
+
+    @Test
+    public void should_Return_A_FloodDTO_List() {
+        FloodDTO floodDTO = new FloodDTO();
+        AddressDTO addressDTO = new AddressDTO();
+        List<String> listOfString = new ArrayList<>();
+        listOfString.add("test");
+        List<AddressDTO> addressDTOList = new ArrayList<>();
+        addressDTOList.add(addressDTO);
+        when(firestationService.findByStation(anyInt())).thenReturn(
+                listOfString);
+        when(personRepository.findPersonByAddress(anyString())).thenReturn(
+                personList);
+        when(medicalRecordService.findByFirstNameAndLastName(anyString(),
+                anyString())).thenReturn(medicalRecord);
+        when(mapping.createAddressDto(anyString(), anyList(),
+                anyList())).thenReturn(addressDTO);
+        when(mapping.createFloodDTO(1, addressDTOList)).thenReturn(floodDTO);
+
+        List<FloodDTO> floodDTOListExpected = personService.getFloodDtoListByStation(
+                listOfIntegers);
+
+        assertTrue(floodDTOListExpected.get(0) instanceof FloodDTO);
+    }
+
+    @Test
+    public void should_Return_A_ChildAlertDTO_Object() {
+        ChildAlertDTO childAlertDTO = new ChildAlertDTO();
+        List<PersonsCoveredByStationDTO> personsCoveredByStationDTOListChildren = new ArrayList<>();
+        personsCoveredByStationDTOListChildren.add(
+                new PersonsCoveredByStationDTO());
+        List<PersonsCoveredByStationDTO> personsCoveredByStationDTOListAdult = new ArrayList<>();
+        personsCoveredByStationDTOListAdult.add(
+                new PersonsCoveredByStationDTO());
+        childAlertDTO.setChildren(personsCoveredByStationDTOListChildren);
+        childAlertDTO.setAdults(personsCoveredByStationDTOListAdult);
+
+        when(personRepository.findPersonByAddress(anyString())).thenReturn(
+                personList);
+        when(medicalRecordService.findByFirstNameAndLastName(anyString(),
+                anyString())).thenReturn(medicalRecord);
+        when(mapping.createChildAlertDto(anyList(), anyList())).thenReturn(
+                childAlertDTO);
+
+        ChildAlertDTO childAlertDT0Expected = personService.getListOfChildrenByAddress(
+                "test");
+
+        assertTrue(childAlertDT0Expected instanceof ChildAlertDTO);
+
+    }
+
+    @Test
+    public void should_Return_A_PersonInfoList() {
+        List<PersonInfoDTO> personInfoDTOList = new ArrayList<>();
+        personInfoDTOList.add(new PersonInfoDTO());
+        when(personRepository.findPersonsByFirstNameAndLastName(anyString(),
+                anyString())).thenReturn(personList);
+        when(medicalRecordService.findMedicalRecordsByFirstNameAndLastName(
+                anyString(), anyString())).thenReturn(medicalRecordList);
+        when(mapping.convertPersonListToPersonInfoDtoList(anyList(), anyList()))
+                .thenReturn(personInfoDTOList);
+
+        List<PersonInfoDTO> personInfoDTOListExpected = personService.getPersonInfoList(
+                "test", "test");
+
+        assertTrue(personInfoDTOListExpected.get(0) instanceof PersonInfoDTO);
+    }
+
+    @Test
+    public void should_Return_A_List_Of_Persons_To_Get_Their_Mails() {
+        when(personRepository.findMailAddressesFromCity(
+                anyString())).thenReturn(personList);
+
+        List<Person> personListExpected = personService.getMailAddressesFromCity(
+                "testcity");
+
+        assertTrue(personListExpected.get(0) instanceof Person);
+        assertEquals("test@test.test", personListExpected.get(0).getEmail());
+    }
+
+    @Test
+    public void should_Throws_NotFoundException_When_City_Is_Not_Existing() {
+        when(personRepository.findMailAddressesFromCity(
+                anyString())).thenReturn(emptyList);
+
+        assertThrows(NotFoundException.class,
+                () -> personService.getMailAddressesFromCity("test"));
+    }
+
+    @Test
+    public void should_Return_A_List_Of_Persons_To_Get_Their_Phone_Number() {
+        when(personRepository.findPhoneNumberByStation(anyInt())).thenReturn(
+                personList);
+
+        List<Person> personListExpected = personService.getPhoneNumberByStation(
+                1);
+
+        assertTrue(personListExpected.get(0) instanceof Person);
+        assertEquals("Test phone", personListExpected.get(0).getPhone());
+    }
+
+    @Test
+    public void should_Throws_NotFoundException_When_No_Person_Is_Covered_By_Station_Number() {
+        when(personRepository.findPhoneNumberByStation(anyInt())).thenReturn(
+                emptyList);
+
+        assertThrows(NotFoundException.class,
+                () -> personService.getPhoneNumberByStation(1));
+    }
 
 }
