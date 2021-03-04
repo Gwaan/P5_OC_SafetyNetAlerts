@@ -39,12 +39,6 @@ public class PersonController {
         return personService.findAll();
     }
 
-    @GetMapping("/person/{firstName}_{lastName}")
-    public Person getPerson(@PathVariable final String firstName,
-            @PathVariable final String lastName) {
-        return personService.findByFirstNameAndLastName(firstName, lastName);
-    }
-
     @PostMapping("/person")
     public ResponseEntity<Void> addPerson(
             @Valid @RequestBody final Person person) {
