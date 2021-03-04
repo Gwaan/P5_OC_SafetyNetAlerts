@@ -261,14 +261,6 @@ public class PersonServiceTest {
     }
 
     @Test
-    public void should_Throws_NotFoundException_When_No_Person_With_Address_Is_Found() {
-        when(personRepository.findPersonByAddress(anyString())).thenReturn(
-                emptyList);
-        assertThrows(NotFoundException.class,
-                () -> personService.findPersonByAddress("test"));
-    }
-
-    @Test
     public void should_Return_A_List_Of_Persons_By_Station() {
         when(personRepository.findPersonByStation(anyInt())).thenReturn(
                 personList);

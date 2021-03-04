@@ -20,7 +20,7 @@ public class FloodControllerIT {
     public void should_Return_A_FloodDTOList_Covered_By_Station_Number() throws Exception {
 
         mockMvc
-                .perform(get("/flood/stations?stations=1,2"))
+                .perform(get("/flood/stations?stations=1,4"))
                 .andExpect(status().isOk());
     }
 

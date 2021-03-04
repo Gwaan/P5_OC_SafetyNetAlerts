@@ -32,7 +32,7 @@ public class FireStationControllerIT {
 
     @Test
     public void should_Add_Fire_Station() throws Exception {
-        Firestation firestation = new Firestation(1L, 1, "Test address");
+        Firestation firestation = new Firestation(1L, 5, "Test address");
 
         mockMvc
                 .perform(post("/firestation")
@@ -44,7 +44,7 @@ public class FireStationControllerIT {
 
     @Test
     public void should_Update_Fire_Station() throws Exception {
-        Firestation firestation = new Firestation(1L, 1, "Test address");
+        Firestation firestation = new Firestation(1L, 5, "Test address");
 
         mockMvc
                 .perform(put("/firestation?address=112 Steppes Pl&station=3")

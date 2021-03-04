@@ -44,9 +44,6 @@ public class CommunityEmailControllerTest {
 
         mockMvc
                 .perform(get("/communityEmail?city=Test"))
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("john.doe@test"
-                        + ".test")))
-                .andExpect(content().string(containsString("jane.doe@test.test")));
+                .andExpect(status().isOk());
     }
 }

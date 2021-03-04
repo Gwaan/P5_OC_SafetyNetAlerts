@@ -129,16 +129,12 @@ public class PersonService {
     }
 
     public List<Person> findPersonByAddress(String address) {
-        List<Person> personsByAddress = (List<Person>) personRepository.findPersonByAddress(
-                address);
-        LOGGER.debug(
-                "PersonService -> Searching for person at address: " + address);
-        if (personsByAddress.isEmpty()) {
-            LOGGER.error(
-                    "PersonService -> No person found at address: " + address);
-            throw new NotFoundException(
-                    "PersonService -> No person found at address: " + address);
-        }
+
+            List<Person> personsByAddress = (List<Person>) personRepository.findPersonByAddress(
+                    address);
+            LOGGER.debug("PersonService -> Searching for person at address: "
+                    + address);
+
         return personsByAddress;
     }
 
