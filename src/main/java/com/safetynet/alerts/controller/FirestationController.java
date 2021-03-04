@@ -45,9 +45,6 @@ public class FirestationController {
             @Valid @RequestBody final Firestation firestation) {
         Firestation firestationToSave = firestationService.save(firestation);
 
-        if (firestationToSave == null) {
-            return ResponseEntity.noContent().build();
-        }
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
@@ -77,7 +74,7 @@ public class FirestationController {
     }
 
     @DeleteMapping("/firestation")
-    public ResponseEntity<Void> deletePerson(
+    public ResponseEntity<Void> deleteFireStation(
             @RequestParam(value = "address") final String address,
             @RequestParam(value = "station") final int station) {
         Firestation firestationToDelete = firestationService.findFirestationByAddressAndStation(

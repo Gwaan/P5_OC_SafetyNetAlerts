@@ -28,7 +28,7 @@ public class MedicalRecordController {
         this.medicalRecordService = medicalRecordService;
     }
 
-    @GetMapping("/medicalRecord/list")
+    @GetMapping("/medicalRecord")
     public Iterable<MedicalRecord> list() {
         return medicalRecordService.findAll();
     }
@@ -39,10 +39,6 @@ public class MedicalRecordController {
             @Valid @RequestBody final MedicalRecord medicalRecord) {
         MedicalRecord medicalRecordToSave = medicalRecordService.save(
                 medicalRecord);
-
-        if (medicalRecordToSave == null) {
-            return ResponseEntity.noContent().build();
-        }
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
