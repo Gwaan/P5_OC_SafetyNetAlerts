@@ -30,7 +30,6 @@ public class PersonInfoController {
 
         LOGGER.info("PersonInfoController (GET) -> Getting person infos for"
                 + firstName + " " + lastName);
-        //TODO: call service instead of mapping
         return personService.getPersonInfoList(firstName, lastName);
     }
 }
