@@ -15,9 +15,9 @@ CREATE TABLE persons
 INSERT INTO persons
 VALUES (1, 'John', 'Doe', '123 test st', 'Test City', 12345, '0607080910', 'john.doe@test.fr');
 INSERT INTO persons
-VALUES (2, 'Jane', 'Doe', '123 test st', 'Test City', 12345, '0607080910', 'john.doe@test.fr');
+VALUES (2, 'Jane', 'Doe', '456 test st', 'Test City', 12345, '0607080910', 'john.doe@test.fr');
 INSERT INTO persons
-VALUES (3, 'Test', 'Test', '123 test st', 'Test City', 12345, '0607080910', 'john.doe@test.fr');
+VALUES (3, 'Test', 'Test', '789 test st', 'Test City', 12345, '0607080910', 'john.doe@test.fr');
 
 DROP TABLE IF EXISTS firestations;
 
@@ -48,8 +48,8 @@ CREATE TABLE medicalrecords
 );
 
 INSERT INTO medicalrecords
-VALUES (1, 'John', 'Doe', '28/08/1991', ('test', 'test'), ('test', 'test'));
+VALUES (1, 'John', 'Doe', '28/08/2020', ('test', 'test'), ('test', 'test'));
 INSERT INTO medicalrecords
-VALUES (2, 'Jane', 'Doe', '28/08/1991', ('test', 'test'), ('test', 'test'));
+VALUES (2, 'Jane', 'Doe', '28/08/2015', ('test', 'test'), ('test', 'test'));
 INSERT INTO medicalrecords
 VALUES (3, 'Test', 'Test', '28/08/1991', ('test', 'test'), ('test', 'test'));
