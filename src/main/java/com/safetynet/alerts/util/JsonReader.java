@@ -28,15 +28,19 @@ public class JsonReader {
 
     private static final Logger LOGGER = LogManager.getLogger(JsonReader.class);
 
-    @Autowired
     private PersonService personService;
 
-    @Autowired
     private FirestationService firestationService;
 
-    @Autowired
     private MedicalRecordService medicalRecordService;
 
+    public JsonReader(PersonService personService,
+            FirestationService firestationService,
+            MedicalRecordService medicalRecordService) {
+        this.personService = personService;
+        this.firestationService = firestationService;
+        this.medicalRecordService = medicalRecordService;
+    }
 
     public void readJsonAndSaveToDb() {
         ObjectMapper mapper = null;
@@ -61,11 +65,13 @@ public class JsonReader {
             LOGGER.error("Error while parsing json");
         } catch (JsonMappingException e) {
             LOGGER.error("Error while mapping json");
+            e.printStackTrace();
         } catch (IOException e) {
             LOGGER.error("I/O error");
         } finally {
             try {
-                is.close();
+                if (is != null)
+                    is.close();
             } catch (IOException e) {
                 LOGGER.error("Error while closing the InputStream");
             }

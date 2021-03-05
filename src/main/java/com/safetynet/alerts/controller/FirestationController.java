@@ -1,8 +1,9 @@
 package com.safetynet.alerts.controller;
 
 import com.safetynet.alerts.model.Firestation;
-import com.safetynet.alerts.model.Person;
+import com.safetynet.alerts.model.dto.CountAndPersonsCoveredDTO;
 import com.safetynet.alerts.service.FirestationService;
+import com.safetynet.alerts.service.PersonService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,51 +20,45 @@ public class FirestationController {
     private static final Logger LOGGER = LogManager.getLogger(
             FirestationController.class);
 
-    @Autowired
     FirestationService firestationService;
 
+    PersonService personService;
+
+    public FirestationController(FirestationService firestationService,
+            PersonService personService) {
+        this.firestationService = firestationService;
+        this.personService = personService;
+    }
 
     @GetMapping("/firestation")
-    public Iterable<Person> getPersonsCoveredByStationId(
-            @RequestParam(value = "stationNumber")
-            final int stationNumber) {
+    public CountAndPersonsCoveredDTO getPersonsCoveredByStationId(
+            @RequestParam final int stationNumber) {
         LOGGER.info(
                 "FireStationController (GET) -> Getting all persons covered "
-                        + "by station number: "
-                        + stationNumber);
-        return firestationService.findPersonsWithStationNumber(stationNumber);
+                        + "by station number: " + stationNumber);
+        return personService.findPersonsWithStationNumber(stationNumber);
+
     }
 
     @PostMapping("/firestation")
     public ResponseEntity<Void> addFirestation(
-            @Valid
-            @RequestBody
-            final Firestation firestation) {
+            @Valid @RequestBody final Firestation firestation) {
         Firestation firestationToSave = firestationService.save(firestation);
 
-        if (firestationToSave == null) {
-            return ResponseEntity.noContent().build();
-        }
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(firestationToSave.getId())
                 .toUri();
         LOGGER.info("FireStationController (POST) -> Fire station "
-                + "successfully added: "
-                + firestationToSave.toString());
+                + "successfully added: " + firestationToSave.toString());
         return ResponseEntity.created(location).build();
     }
 
     @PutMapping("/firestation")
     public ResponseEntity<Firestation> updateFirestation(
-            @RequestParam(value = "address")
-            final String address,
-            @RequestParam(value = "station")
-            final int station,
-            @Valid
-            @RequestBody
-            final Firestation firestation) {
+            @RequestParam final String address, @RequestParam final int station,
+            @Valid @RequestBody final Firestation firestation) {
 
         Firestation firestationToUpdate = firestationService.findFirestationByAddressAndStation(
                 address, station);
@@ -79,18 +74,14 @@ public class FirestationController {
     }
 
     @DeleteMapping("/firestation")
-    public ResponseEntity<Void> deletePerson(
-            @RequestParam(value = "address")
-            final String address,
-            @RequestParam(value = "station")
-            final int station) {
+    public ResponseEntity<Void> deleteFireStation(
+            @RequestParam(value = "address") final String address,
+            @RequestParam(value = "station") final int station) {
         Firestation firestationToDelete = firestationService.findFirestationByAddressAndStation(
                 address, station);
         firestationService.deleteFirestation(firestationToDelete);
-        LOGGER.info(
-                "FirestationController (DEL) -> Successfully deleted fire "
-                        + "station: "
-                        + firestationToDelete.toString());
+        LOGGER.info("FirestationController (DEL) -> Successfully deleted fire "
+                + "station: " + firestationToDelete.toString());
         return ResponseEntity.ok().build();
 
     }

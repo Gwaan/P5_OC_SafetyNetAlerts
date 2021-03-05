@@ -1,7 +1,9 @@
 package com.safetynet.alerts.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,24 +24,30 @@ public class Person {
 
     }
 
-    public Person(
-            @NotBlank(message = "First name field cannot be empty") String firstName,
-            @NotBlank(message = "Last name field cannot be empty") String lastName,
+    public Person(Long id, @NotBlank(
+            message = "First name field cannot be empty") String firstName,
+            @NotBlank(
+                    message = "Last name field cannot be empty") String lastName,
             @NotBlank(message = "Address field cannot be empty") String address,
             @NotBlank(message = "City field cannot be empty") String city,
             @NotNull(message = "Zip field cannot be empty") Integer zip,
-            @NotBlank(message = "Phone field name cannot be empty") String phone) {
+            @NotBlank(
+                    message = "Phone field name cannot be empty") String phone,
+            @NotBlank(message = "Email field cannot be empty") String email) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;
         this.city = city;
         this.zip = zip;
         this.phone = phone;
+        this.email = email;
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @JsonIgnore
     private Long id;
 
     @NotBlank(message = "First name field cannot be empty")
@@ -70,6 +78,5 @@ public class Person {
     @NotBlank(message = "Email field cannot be empty")
     @Column(name = "email")
     private String email;
-
 
 }

@@ -18,9 +18,12 @@ public class FirestationService {
     private static final Logger LOGGER = LogManager.getLogger(
             FirestationService.class);
 
-    @Autowired
     private FirestationRepository fireStationRepository;
 
+
+    public FirestationService(FirestationRepository fireStationRepository) {
+        this.fireStationRepository = fireStationRepository;
+    }
 
     public Iterable<Firestation> findAll() {
         return fireStationRepository.findAll();
@@ -53,23 +56,6 @@ public class FirestationService {
         fireStationRepository.delete(firestation);
     }
 
-    public Iterable<Person> findPersonsWithStationNumber(
-            final int stationNumber) {
-        List<Person> person = (List<Person>) fireStationRepository.findPersonsWithStationNumber(
-                stationNumber);
-
-        if (person.isEmpty()) {
-            LOGGER.error(
-                    "FireStationService -> No address is covered by the station n°: "
-                            + stationNumber);
-            throw new NotFoundException(
-                    "No address is covered by the station n°: "
-                            + stationNumber);
-        }
-        LOGGER.info(
-                "FireStationService -> " + person.size() + " persons found.");
-        return person;
-    }
 
     public Firestation findFirestationByAddressAndStation(String address,
             int station) {
@@ -90,6 +76,10 @@ public class FirestationService {
         return firestation;
     }
 
+    public Iterable<String> findByStation(int station) {
+        return fireStationRepository.findAddressesByStation(station);
+    }
+
     public Firestation updateFirestation(Firestation firestationBody,
             Firestation firestationToUpdate) {
         firestationToUpdate.setAddress(firestationBody.getAddress());
@@ -102,5 +92,20 @@ public class FirestationService {
             int station) {
         return fireStationRepository.existsFirestationByAddressAndStation(
                 address, station);
+    }
+
+    public List<Integer> findStationByAddress(String address) {
+        List<Integer> stationIds = (List<Integer>) fireStationRepository.findStationByAddress(
+                address);
+        LOGGER.debug(
+                "FirestationService -> Searching for fire station at address"
+                        + address + "...");
+        if (stationIds.isEmpty()) {
+            LOGGER.error("No station is existing at address: " + address);
+            throw new NotFoundException(
+                    "No station is existing at address: " + address);
+
+        }
+        return stationIds;
     }
 }
