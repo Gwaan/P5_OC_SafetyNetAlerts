@@ -12,18 +12,39 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
+/**
+ * Person info controller.
+ */
 @RestController
 public class PersonInfoController {
 
+    /**
+     * @see Logger
+     */
     private static final Logger LOGGER = LogManager.getLogger(
             PersonInfoController.class);
 
+    /**
+     * @see PersonService
+     */
     PersonService personService;
 
+    /**
+     * Instantiates a new Person info controller.
+     *
+     * @param personService the person service
+     */
     public PersonInfoController(PersonService personService) {
         this.personService = personService;
     }
 
+    /**
+     * Gets person infos.
+     *
+     * @param firstName the first name
+     * @param lastName  the last name
+     * @return the person infos
+     */
     @GetMapping("/personInfo")
     public List<PersonInfoDTO> getPersonInfos(@RequestParam String firstName,
             @RequestParam String lastName) {

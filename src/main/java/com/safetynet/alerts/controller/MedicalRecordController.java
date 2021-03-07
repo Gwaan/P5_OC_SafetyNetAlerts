@@ -13,29 +13,58 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 import javax.validation.Valid;
 import java.net.URI;
 
+/**
+ * Medical record controller.
+ *
+ * @author Gwen
+ * @version 1.0
+ */
 @RestController
 public class MedicalRecordController {
 
+    /**
+     * @see Logger
+     */
     private static final Logger LOGGER = LogManager.getLogger(
             MedicalRecordController.class);
 
+    /**
+     * @see MedicalRecordService
+     */
     private MedicalRecordService medicalRecordService;
 
+    /**
+     * Instantiates a new Medical record controller.
+     *
+     * @param medicalRecordService the medical record service
+     */
     public MedicalRecordController(MedicalRecordService medicalRecordService) {
         this.medicalRecordService = medicalRecordService;
     }
 
+    /**
+     * Get all medical records.
+     *
+     * @return the iterable
+     */
     @GetMapping("/medicalRecord")
     public Iterable<MedicalRecord> list() {
         return medicalRecordService.findAll();
     }
 
 
+    /**
+     * Add medical record.
+     *
+     * @param medicalRecord the medical record
+     * @return the response entity
+     */
     @PostMapping("/medicalRecord")
-    public ResponseEntity<Void> addPerson(
+    public ResponseEntity<Void> addMedicalRecord(
             @Valid @RequestBody final MedicalRecord medicalRecord) {
         MedicalRecord medicalRecordToSave = medicalRecordService.save(
                 medicalRecord);
@@ -49,6 +78,14 @@ public class MedicalRecordController {
         return ResponseEntity.created(location).build();
     }
 
+    /**
+     * Update medical record.
+     *
+     * @param firstName     the first name
+     * @param lastName      the last name
+     * @param medicalRecord the medical record
+     * @return the response entity
+     */
     @PutMapping("/medicalRecord")
     public ResponseEntity<MedicalRecord> updateMedicalRecord(
             @RequestParam(value = "firstName") final String firstName,
@@ -69,6 +106,13 @@ public class MedicalRecordController {
 
     }
 
+    /**
+     * Delete medical record.
+     *
+     * @param firstName the first name
+     * @param lastName  the last name
+     * @return the response entity
+     */
     @DeleteMapping("/medicalRecord")
     public ResponseEntity<Void> deleteMedicalRecord(
             @RequestParam(value = "firstName") final String firstName,

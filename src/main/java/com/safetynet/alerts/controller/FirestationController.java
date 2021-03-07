@@ -14,22 +14,46 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 
+/**
+ * Firestation controller.
+ */
 @RestController
 public class FirestationController {
 
+    /**
+     * @see Logger
+     */
     private static final Logger LOGGER = LogManager.getLogger(
             FirestationController.class);
 
+    /**
+     * @see FirestationService
+     */
     FirestationService firestationService;
 
+    /**
+     * @see PersonService
+     */
     PersonService personService;
 
+    /**
+     * Instantiates a new Firestation controller.
+     *
+     * @param firestationService the firestation service
+     * @param personService      the person service
+     */
     public FirestationController(FirestationService firestationService,
             PersonService personService) {
         this.firestationService = firestationService;
         this.personService = personService;
     }
 
+    /**
+     * Gets persons covered by station id.
+     *
+     * @param stationNumber the station number
+     * @return the persons covered by station id
+     */
     @GetMapping("/firestation")
     public CountAndPersonsCoveredDTO getPersonsCoveredByStationId(
             @RequestParam final int stationNumber) {
@@ -40,6 +64,12 @@ public class FirestationController {
 
     }
 
+    /**
+     * Add firestation.
+     *
+     * @param firestation the firestation
+     * @return the response entity
+     */
     @PostMapping("/firestation")
     public ResponseEntity<Void> addFirestation(
             @Valid @RequestBody final Firestation firestation) {
@@ -55,6 +85,14 @@ public class FirestationController {
         return ResponseEntity.created(location).build();
     }
 
+    /**
+     * Update firestation.
+     *
+     * @param address     the address
+     * @param station     the station
+     * @param firestation the firestation
+     * @return the response entity
+     */
     @PutMapping("/firestation")
     public ResponseEntity<Firestation> updateFirestation(
             @RequestParam final String address, @RequestParam final int station,
@@ -73,6 +111,13 @@ public class FirestationController {
 
     }
 
+    /**
+     * Delete fire station.
+     *
+     * @param address the address
+     * @param station the station
+     * @return the response entity
+     */
     @DeleteMapping("/firestation")
     public ResponseEntity<Void> deleteFireStation(
             @RequestParam(value = "address") final String address,

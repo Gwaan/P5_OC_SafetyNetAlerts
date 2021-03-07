@@ -14,16 +14,37 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+/**
+ * Person entity.
+ *
+ * @author Gwen
+ * @version 1.0
+ */
 @Data
 @Entity
 @Table(name = "persons")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Person {
 
+    /**
+     * Instantiates a new Person.
+     */
     public Person() {
 
     }
 
+    /**
+     * Instantiates a new Person.
+     *
+     * @param id        the id
+     * @param firstName the first name
+     * @param lastName  the last name
+     * @param address   the address
+     * @param city      the city
+     * @param zip       the zip
+     * @param phone     the phone
+     * @param email     the email
+     */
     public Person(Long id, @NotBlank(
             message = "First name field cannot be empty") String firstName,
             @NotBlank(
@@ -44,37 +65,61 @@ public class Person {
         this.email = email;
     }
 
+    /**
+     * The Id.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     @JsonIgnore
     private Long id;
 
+    /**
+     * The First name.
+     */
     @NotBlank(message = "First name field cannot be empty")
     @Column(name = "first_name")
     @JsonProperty("")
     private String firstName;
 
+    /**
+     * The Last name.
+     */
     @NotBlank(message = "Last name field cannot be empty")
     @Column(name = "last_name")
     private String lastName;
 
+    /**
+     * The Address.
+     */
     @NotBlank(message = "Address field cannot be empty")
     @Column(name = "address")
     private String address;
 
+    /**
+     * The City.
+     */
     @NotBlank(message = "City field cannot be empty")
     @Column(name = "city")
     private String city;
 
+    /**
+     * The Zip.
+     */
     @NotNull(message = "Zip field cannot be empty")
     @Column(name = "zip")
     private Integer zip;
 
+    /**
+     * The Phone.
+     */
     @NotBlank(message = "Phone field name cannot be empty")
     @Column(name = "phone")
     private String phone;
 
+    /**
+     * The Email.
+     */
     @NotBlank(message = "Email field cannot be empty")
     @Column(name = "email")
     private String email;

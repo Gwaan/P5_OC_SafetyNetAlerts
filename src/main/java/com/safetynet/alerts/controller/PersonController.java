@@ -20,25 +20,53 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 
+/**
+ * Person controller.
+ *
+ * @author Gwen
+ * @version 1.0
+ */
 @RestController
 public class PersonController {
 
+    /**
+     * @see Logger
+     */
     private static final Logger LOGGER = LogManager.getLogger(
             PersonController.class);
 
 
+    /**
+     * @see PersonService
+     */
     private PersonService personService;
 
+    /**
+     * Instantiates a new Person controller.
+     *
+     * @param personService the person service
+     */
     public PersonController(PersonService personService) {
         this.personService = personService;
     }
 
+    /**
+     * Get all persons.
+     *
+     * @return the persons
+     */
     @GetMapping("/person")
     public Iterable<Person> getPersons() {
         LOGGER.info("PersonController (GET) -> Get all persons ");
         return personService.findAll();
     }
 
+    /**
+     * Add person.
+     *
+     * @param person the person
+     * @return the response entity
+     */
     @PostMapping("/person")
     public ResponseEntity<Void> addPerson(
             @Valid @RequestBody final Person person) {
@@ -53,6 +81,14 @@ public class PersonController {
         return ResponseEntity.created(location).build();
     }
 
+    /**
+     * Update person.
+     *
+     * @param firstName the first name
+     * @param lastName  the last name
+     * @param person    the person
+     * @return the response entity
+     */
     @PutMapping("/person")
     public ResponseEntity<Person> updatePerson(
             @RequestParam(value = "firstName") final String firstName,
@@ -70,6 +106,13 @@ public class PersonController {
 
     }
 
+    /**
+     * Delete person.
+     *
+     * @param firstName the first name
+     * @param lastName  the last name
+     * @return the response entity
+     */
     @DeleteMapping("/person")
     public ResponseEntity<Void> deletePerson(
             @RequestParam(value = "firstName") final String firstName,

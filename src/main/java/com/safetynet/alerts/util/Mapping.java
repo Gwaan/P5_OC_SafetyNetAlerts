@@ -16,16 +16,37 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Mapping.
+ *
+ * @author Gwen
+ * @version 1.0
+ */
 @Component
 public class Mapping {
 
 
+    /**
+     * @see AgeCountCalculator
+     */
     private AgeCountCalculator ageCountCalculator;
 
+    /**
+     * Instantiates a new Mapping.
+     *
+     * @param ageCountCalculator the age count calculator
+     */
     public Mapping(AgeCountCalculator ageCountCalculator) {
         this.ageCountCalculator = ageCountCalculator;
     }
 
+    /**
+     * Convert Person list to PersonsCoveredByStationDTO list.
+     *
+     * @param persons        the persons
+     * @param medicalRecords the medical records
+     * @return PersonCoveredByStationDTO list
+     */
     public List<PersonsCoveredByStationDTO> convertPersonListToPersonsCoveredByStationDtoList(
             final List<Person> persons,
             final List<MedicalRecord> medicalRecords) {
@@ -43,6 +64,13 @@ public class Mapping {
         return personsDTO;
     }
 
+    /**
+     * Convert Person to PersonsCoveredByStationDTO.
+     *
+     * @param person        the person
+     * @param medicalRecord the medical record
+     * @return PersonsCoveredByStationDTO object
+     */
     public PersonsCoveredByStationDTO convertPersonToPersonsCoveredByStationsDto(
             final Person person, final MedicalRecord medicalRecord) {
         PersonsCoveredByStationDTO persDto = new PersonsCoveredByStationDTO();
@@ -57,6 +85,13 @@ public class Mapping {
         return persDto;
     }
 
+    /**
+     * Convert Person list to PersonInfoDTO list.
+     *
+     * @param persons        the persons
+     * @param medicalRecords the medical records
+     * @return PersonInfoDTO list
+     */
     public List<PersonInfoDTO> convertPersonListToPersonInfoDtoList(
             final List<Person> persons,
             final List<MedicalRecord> medicalRecords) {
@@ -74,8 +109,15 @@ public class Mapping {
         return personsInfoDTO;
     }
 
+    /**
+     * Convert Person to PersonInfoDTO object.
+     *
+     * @param person        the person
+     * @param medicalRecord the medical record
+     * @return PersonInfoDTO object
+     */
     public PersonInfoDTO convertPersonToPersonInfoDto(final Person person,
-            final MedicalRecord medicalRecord) {
+                                                      final MedicalRecord medicalRecord) {
         PersonInfoDTO personInfoDTO = new PersonInfoDTO();
         personInfoDTO.setFirstName(person.getFirstName());
         personInfoDTO.setLastName(person.getLastName());
@@ -92,6 +134,14 @@ public class Mapping {
         return personInfoDTO;
     }
 
+    /**
+     * Convert Person list to PersonFireDTO list.
+     *
+     * @param persons        the persons
+     * @param station        the station
+     * @param medicalRecords the medical records
+     * @return PersonFireDTO list
+     */
     public List<PersonFireDTO> convertPersonListToPersonFireList(
             final List<Person> persons, final Integer station,
             final List<MedicalRecord> medicalRecords) {
@@ -110,8 +160,15 @@ public class Mapping {
         return personFireDTOList;
     }
 
+    /**
+     * Convert Person to PersonFireDTO object.
+     *
+     * @param person        the person
+     * @param medicalRecord the medical record
+     * @return PersonFireDTO object
+     */
     public PersonFireDTO convertPersonToPersonFireDto(final Person person,
-            final MedicalRecord medicalRecord) {
+                                                      final MedicalRecord medicalRecord) {
         PersonFireDTO personFireDTO = new PersonFireDTO();
         personFireDTO.setFirstName(person.getFirstName());
         personFireDTO.setLastName(person.getLastName());
@@ -129,6 +186,13 @@ public class Mapping {
     }
 
 
+    /**
+     * Convert Person list to CountAndPersonsCoveredDTO object.
+     *
+     * @param persons        the persons
+     * @param medicalRecords the medical records
+     * @return CountAndPersonsCoveredDTO object
+     */
     public CountAndPersonsCoveredDTO convertPersonListToCountAndPersonsCoveredDTO(
             final List<Person> persons,
             final List<MedicalRecord> medicalRecords) {
@@ -148,8 +212,15 @@ public class Mapping {
         return countAndPersonsCoveredDTO;
     }
 
+    /**
+     * Create ChildAlertDTO object.
+     *
+     * @param personList     the person list
+     * @param medicalRecords the medical records
+     * @return ChildAlertDTO object
+     */
     public ChildAlertDTO createChildAlertDto(final List<Person> personList,
-            final List<MedicalRecord> medicalRecords) {
+                                             final List<MedicalRecord> medicalRecords) {
         ChildAlertDTO childAlertDTO = new ChildAlertDTO();
         List<PersonsCoveredByStationDTO> personsCoveredByStationDTOList = convertPersonListToPersonsCoveredByStationDtoList(
                 personList, medicalRecords);
@@ -174,9 +245,17 @@ public class Mapping {
     }
 
 
+    /**
+     * Create AddressDTO object.
+     *
+     * @param address           the address
+     * @param personInfoDTOList the person info dto list
+     * @param medicalRecords    the medical records
+     * @return AddressDTO object
+     */
     public AddressDTO createAddressDto(final String address,
-            final List<Person> personInfoDTOList,
-            final List<MedicalRecord> medicalRecords) {
+                                       final List<Person> personInfoDTOList,
+                                       final List<MedicalRecord> medicalRecords) {
         AddressDTO addressDTO = new AddressDTO();
         addressDTO.setHouseHold(address);
         addressDTO.setPersonInfoList(
@@ -187,8 +266,15 @@ public class Mapping {
 
     }
 
+    /**
+     * Create FloodDTO object.
+     *
+     * @param station        the station
+     * @param addressDTOList the address dto list
+     * @return FloodDTO object
+     */
     public FloodDTO createFloodDTO(final Integer station,
-            final List<AddressDTO> addressDTOList) {
+                                   final List<AddressDTO> addressDTOList) {
         FloodDTO floodDTO = new FloodDTO();
         floodDTO.setStation(station);
         floodDTO.setHouseHoldCovered(addressDTOList);
@@ -196,6 +282,13 @@ public class Mapping {
         return floodDTO;
     }
 
+    /**
+     * Map medical records with person covered by station dto.
+     *
+     * @param person         the person
+     * @param medicalRecords the medical records
+     * @return the medical record who matches by first name and last name with person
+     */
     public MedicalRecord mapMedicalRecordsWithPersonCoveredByStationDTO(
             PersonsCoveredByStationDTO person,
             List<MedicalRecord> medicalRecords) {
@@ -213,8 +306,15 @@ public class Mapping {
         return medicalRecordToReturn;
     }
 
+    /**
+     * Map medical records with person.
+     *
+     * @param person         the person
+     * @param medicalRecords the medical records
+     * @return the medical record who matches by first name and last name with person
+     */
     public MedicalRecord mapMedicalRecordsWithPerson(Person person,
-            List<MedicalRecord> medicalRecords) {
+                                                     List<MedicalRecord> medicalRecords) {
         MedicalRecord medicalRecordToReturn = null;
         for (MedicalRecord medicalRecord : medicalRecords) {
             if (person
@@ -228,6 +328,13 @@ public class Mapping {
         return medicalRecordToReturn;
     }
 
+    /**
+     * Map medical records with PersonInfoDTO.
+     *
+     * @param person         the person
+     * @param medicalRecords the medical records
+     * @return the medical record who matches by first name and last name with person
+     */
     public MedicalRecord mapMedicalRecordsWithPersonInfoDTO(
             PersonInfoDTO person, List<MedicalRecord> medicalRecords) {
         MedicalRecord medicalRecordToReturn = null;

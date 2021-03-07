@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -23,25 +24,53 @@ import java.io.InputStream;
 import java.util.List;
 
 
+/**
+ * Json reader.
+ *
+ * @author Gwen
+ * @version 1.0
+ */
 @Component
 public class JsonReader {
 
+    /**
+     * @see Logger
+     */
     private static final Logger LOGGER = LogManager.getLogger(JsonReader.class);
 
+    /**
+     * @see PersonService
+     */
     private PersonService personService;
 
+    /**
+     * @see FirestationService
+     */
     private FirestationService firestationService;
 
+    /**
+     * @see MedicalRecordService
+     */
     private MedicalRecordService medicalRecordService;
 
+    /**
+     * Instantiates a new Json reader.
+     *
+     * @param personService        the person service
+     * @param firestationService   the firestation service
+     * @param medicalRecordService the medical record service
+     */
     public JsonReader(PersonService personService,
-            FirestationService firestationService,
-            MedicalRecordService medicalRecordService) {
+                      FirestationService firestationService,
+                      MedicalRecordService medicalRecordService) {
         this.personService = personService;
         this.firestationService = firestationService;
         this.medicalRecordService = medicalRecordService;
     }
 
+    /**
+     * Read json and save it to db.
+     */
     public void readJsonAndSaveToDb() {
         ObjectMapper mapper = null;
         InputStream is = null;
