@@ -1,13 +1,10 @@
 package com.safetynet.alerts.repository;
 
 import com.safetynet.alerts.model.Person;
-import org.aspectj.weaver.patterns.PerObject;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
-import java.util.List;
 
 /**
  * Person repository.

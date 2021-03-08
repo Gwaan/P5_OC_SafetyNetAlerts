@@ -140,7 +140,7 @@ public class MappingTest {
         PersonInfoDTO personInfoDTO = mapping.convertPersonToPersonInfoDto(
                 person, null);
 
-        assertEquals(404, personInfoDTO.getAge());
+        assertEquals(-1, personInfoDTO.getAge());
     }
 
     @Test
@@ -173,7 +173,7 @@ public class MappingTest {
         PersonFireDTO personFireDTO = mapping.convertPersonToPersonFireDto(
                 person, null);
 
-        assertEquals(404, personFireDTO.getAge());
+        assertEquals(-1, personFireDTO.getAge());
     }
 
     @Test

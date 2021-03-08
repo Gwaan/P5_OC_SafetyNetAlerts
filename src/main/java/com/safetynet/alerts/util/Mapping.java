@@ -9,11 +9,9 @@ import com.safetynet.alerts.model.dto.FloodDTO;
 import com.safetynet.alerts.model.dto.PersonFireDTO;
 import com.safetynet.alerts.model.dto.PersonInfoDTO;
 import com.safetynet.alerts.model.dto.PersonsCoveredByStationDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -81,7 +79,7 @@ public class Mapping {
         persDto.setZip(person.getZip());
         persDto.setPhone(person.getPhone());
         persDto.setAge(medicalRecord != null ? ageCountCalculator.calculateAge(
-                medicalRecord.getBirthDate()) : 404);
+                medicalRecord.getBirthDate()) : -1);
         return persDto;
     }
 
@@ -124,7 +122,7 @@ public class Mapping {
         personInfoDTO.setPhone(person.getPhone());
         personInfoDTO.setAge(
                 medicalRecord != null ? ageCountCalculator.calculateAge(
-                        medicalRecord.getBirthDate()) : 404);
+                        medicalRecord.getBirthDate()) : -1);
         personInfoDTO.setAllergies(
                 medicalRecord != null ? medicalRecord.getAllergies()
                         : new String[]{"No medical record found"});
@@ -175,7 +173,7 @@ public class Mapping {
         personFireDTO.setPhone(person.getPhone());
         personFireDTO.setAge(
                 medicalRecord != null ? ageCountCalculator.calculateAge(
-                        medicalRecord.getBirthDate()) : 404);
+                        medicalRecord.getBirthDate()) : -1);
         personFireDTO.setAllergies(
                 medicalRecord != null ? medicalRecord.getAllergies()
                         : new String[]{"No medical record found"});
@@ -231,7 +229,7 @@ public class Mapping {
             MedicalRecord medicalRecord = mapMedicalRecordsWithPersonCoveredByStationDTO(
                     person, medicalRecords);
             int age = medicalRecord != null ? ageCountCalculator.calculateAge(
-                    medicalRecord.getBirthDate()) : 404;
+                    medicalRecord.getBirthDate()) : -1;
             if (age <= 18) {
                 children.add(person);
             } else {
