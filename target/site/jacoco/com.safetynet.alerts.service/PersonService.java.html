@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PersonService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">alerts</a> &gt; <a href="index.source.html" class="el_package">com.safetynet.alerts.service</a> &gt; <span class="el_source">PersonService.java</span></div><h1>PersonService.java</h1><pre class="source lang-java linenums">package com.safetynet.alerts.service;
+
+import com.safetynet.alerts.exceptions.AlreadyExistingException;
+import com.safetynet.alerts.exceptions.NotFoundException;
+import com.safetynet.alerts.model.MedicalRecord;
+import com.safetynet.alerts.model.Person;
+import com.safetynet.alerts.model.dto.AddressDTO;
+import com.safetynet.alerts.model.dto.ChildAlertDTO;
+import com.safetynet.alerts.model.dto.CountAndPersonsCoveredDTO;
+import com.safetynet.alerts.model.dto.FloodDTO;
+import com.safetynet.alerts.model.dto.PersonFireDTO;
+import com.safetynet.alerts.model.dto.PersonInfoDTO;
+import com.safetynet.alerts.repository.PersonRepository;
+import com.safetynet.alerts.util.Mapping;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Person service.
+ *
+ * @author Gwen
+ * @version 1.0
+ */
+@Service
+public class PersonService {
+
+    /**
+     * @see Logger
+     */
+<span class="fc" id="L34">    private static final Logger LOGGER = LogManager.getLogger(</span>
+            PersonService.class);
+
+    /**
+     * @see PersonRepository
+     */
+    private PersonRepository personRepository;
+
+    /**
+     * @see Mapping
+     */
+    private Mapping mapping;
+
+    /**
+     * @see FirestationService
+     */
+    private FirestationService firestationService;
+
+    /**
+     * @see MedicalRecordService
+     */
+    private MedicalRecordService medicalRecordService;
+
+    /**
+     * Instantiates a new Person service.
+     *
+     * @param personRepository     the person repository
+     * @param mapping              the mapping
+     * @param firestationService   the firestation service
+     * @param medicalRecordService the medical record service
+     */
+    public PersonService(PersonRepository personRepository, Mapping mapping,
+                         FirestationService firestationService,
+<span class="fc" id="L67">                         MedicalRecordService medicalRecordService) {</span>
+<span class="fc" id="L68">        this.personRepository = personRepository;</span>
+<span class="fc" id="L69">        this.mapping = mapping;</span>
+<span class="fc" id="L70">        this.firestationService = firestationService;</span>
+<span class="fc" id="L71">        this.medicalRecordService = medicalRecordService;</span>
+<span class="fc" id="L72">    }</span>
+
+    /**
+     * Find all persons.
+     *
+     * @return list of persons
+     */
+    public Iterable&lt;Person&gt; findAll() {
+<span class="fc" id="L80">        return personRepository.findAll();</span>
+    }
+
+    /**
+     * Save person.
+     *
+     * @param person the person
+     * @return the person
+     * @throws AlreadyExistingException if person is already existing
+     */
+    public Person save(Person person) {
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        if (existsPersonByFirstNameAndLastName(person.getFirstName(),</span>
+<span class="fc" id="L92">                person.getLastName())) {</span>
+<span class="fc" id="L93">            LOGGER.error(</span>
+<span class="fc" id="L94">                    &quot;PersonService -&gt; Person &quot; + person.getFirstName() + &quot; &quot;</span>
+<span class="fc" id="L95">                            + person.getLastName() + &quot; is already existing&quot;);</span>
+<span class="fc" id="L96">            throw new AlreadyExistingException(</span>
+<span class="fc" id="L97">                    &quot;PersonService -&gt; Person: &quot; + person.getFirstName() + &quot; &quot;</span>
+<span class="fc" id="L98">                            + person.getLastName() + &quot; is already existing.&quot;);</span>
+        }
+
+<span class="fc" id="L101">        return personRepository.save(person);</span>
+    }
+
+    /**
+     * Save updated person.
+     *
+     * @param person the person
+     * @return the person saved
+     */
+    public Person saveUpdated(Person person) {
+<span class="fc" id="L111">        return personRepository.save(person);</span>
+    }
+
+    /**
+     * Save all persons.
+     *
+     * @param persons the persons
+     * @return list of persons saved
+     */
+    public Iterable&lt;Person&gt; saveAll(Iterable&lt;Person&gt; persons) {
+<span class="fc" id="L121">        return personRepository.saveAll(persons);</span>
+    }
+
+    /**
+     * Find person by first name and last name.
+     *
+     * @param firstName the first name
+     * @param lastName  the last name
+     * @return the person
+     * @throws NotFoundException if no person was found
+     */
+    public Person findByFirstNameAndLastName(String firstName,
+                                             String lastName) {
+<span class="fc" id="L134">        LOGGER.debug(&quot;PersonService -&gt; Searching for person &quot; + firstName + &quot; &quot;</span>
+                + lastName + &quot; ...&quot;);
+<span class="fc" id="L136">        Person person = personRepository.findByFirstNameAndLastName(firstName,</span>
+                lastName);
+
+<span class="fc bfc" id="L139" title="All 2 branches covered.">        if (person == null) {</span>
+<span class="fc" id="L140">            LOGGER.error(&quot;PersonService -&gt; &quot; + firstName + &quot; &quot; + lastName</span>
+                    + &quot; doesn't exist&quot;);
+<span class="fc" id="L142">            throw new NotFoundException(</span>
+                    &quot;Person &quot; + firstName + &quot; &quot; + lastName + &quot; doesn't exist&quot;);
+        }
+<span class="fc" id="L145">        LOGGER.info(&quot;PersonService -&gt; Person &quot; + firstName + &quot; &quot; + lastName</span>
+                + &quot; was found&quot;);
+<span class="fc" id="L147">        return person;</span>
+    }
+
+    /**
+     * Find persons by first name and last name list.
+     *
+     * @param firstName the first name
+     * @param lastName  the last name
+     * @return list of persons found
+     * @throws NotFoundException if no person was found
+     */
+    public List&lt;Person&gt; findPersonsByFirstNameAndLastName(String firstName,
+                                                          String lastName) {
+<span class="fc" id="L160">        LOGGER.debug(&quot;PersonService -&gt; Searching for person &quot; + firstName + &quot; &quot;</span>
+                + lastName + &quot; ...&quot;);
+<span class="fc" id="L162">        List&lt;Person&gt; persons = (List&lt;Person&gt;) personRepository.findPersonsByFirstNameAndLastName(</span>
+                firstName, lastName);
+
+<span class="fc bfc" id="L165" title="All 2 branches covered.">        if (persons.isEmpty()) {</span>
+<span class="fc" id="L166">            LOGGER.error(&quot;PersonService -&gt; &quot; + firstName + &quot; &quot; + lastName</span>
+                    + &quot; doesn't exist&quot;);
+<span class="fc" id="L168">            throw new NotFoundException(</span>
+                    &quot;Person &quot; + firstName + &quot; &quot; + lastName + &quot; doesn't exist&quot;);
+        }
+<span class="fc" id="L171">        LOGGER.info(&quot;PersonService -&gt; Person &quot; + firstName + &quot; &quot; + lastName</span>
+                + &quot; was found&quot;);
+<span class="fc" id="L173">        return persons;</span>
+    }
+
+
+    /**
+     * Delete person.
+     *
+     * @param person the person
+     */
+    public void deletePerson(Person person) {
+<span class="fc" id="L183">        personRepository.delete(person);</span>
+<span class="fc" id="L184">    }</span>
+
+    /**
+     * Update person.
+     *
+     * @param personBody     the person body
+     * @param personToUpdate the person to update
+     * @return the person updated
+     */
+    public Person updatePerson(Person personBody, Person personToUpdate) {
+<span class="fc" id="L194">        personToUpdate.setAddress(personBody.getAddress());</span>
+<span class="fc" id="L195">        personToUpdate.setCity(personBody.getCity());</span>
+<span class="fc" id="L196">        personToUpdate.setEmail(personBody.getEmail());</span>
+<span class="fc" id="L197">        personToUpdate.setPhone(personBody.getPhone());</span>
+<span class="fc" id="L198">        personToUpdate.setZip(personBody.getZip());</span>
+
+<span class="fc" id="L200">        return personToUpdate;</span>
+    }
+
+    /**
+     * Exists person by first name and last name.
+     *
+     * @param firstName the first name
+     * @param lastName  the last name
+     * @return either true if person is existing or false if it's not
+     */
+    public boolean existsPersonByFirstNameAndLastName(String firstName,
+                                                      String lastName) {
+<span class="fc" id="L212">        return personRepository.existsPersonsByFirstNameAndLastName(firstName,</span>
+                lastName);
+    }
+
+    /**
+     * Find person by address.
+     *
+     * @param address the address
+     * @return list of persons covered by address
+     */
+    public List&lt;Person&gt; findPersonByAddress(String address) {
+
+<span class="fc" id="L224">        List&lt;Person&gt; personsByAddress = (List&lt;Person&gt;) personRepository.findPersonByAddress(</span>
+                address);
+<span class="fc" id="L226">        LOGGER.debug(&quot;PersonService -&gt; Searching for person at address: &quot;</span>
+                + address);
+
+<span class="fc" id="L229">        return personsByAddress;</span>
+    }
+
+    /**
+     * Find person by station.
+     *
+     * @param station the station
+     * @return list of persons covered by station number
+     * @throws NotFoundException if no person was found
+     */
+    public List&lt;Person&gt; findPersonByStation(int station) {
+<span class="fc" id="L240">        List&lt;Person&gt; personFound = (List&lt;Person&gt;) personRepository.findPersonByStation(</span>
+                station);
+
+<span class="fc bfc" id="L243" title="All 2 branches covered.">        if (personFound.isEmpty()) {</span>
+<span class="fc" id="L244">            LOGGER.error(</span>
+                    &quot;PersonService -&gt; No person covered by station: &quot; + station
+                            + &quot; found&quot;);
+<span class="fc" id="L247">            throw new NotFoundException(</span>
+                    &quot;PersonService -&gt; No person covered by station: &quot; + station
+                            + &quot; found&quot;);
+        }
+<span class="fc" id="L251">        return personFound;</span>
+    }
+
+    /**
+     * Find persons covered by station number and convert them into a CountAndPersonsCoveredDTO object.
+     *
+     * @param stationNumber the station number
+     * @return the count and persons covered dto object
+     * @throws NotFoundException if no person was found
+     */
+    public CountAndPersonsCoveredDTO findPersonsWithStationNumber(
+            final int stationNumber) {
+<span class="fc" id="L263">        List&lt;Person&gt; persons = (List&lt;Person&gt;) personRepository.findPersonsWithStationNumber(</span>
+                stationNumber);
+
+<span class="pc bpc" id="L266" title="1 of 2 branches missed.">        if (persons.isEmpty()) {</span>
+<span class="nc" id="L267">            LOGGER.error(&quot;PersonsService -&gt; No address is &quot;</span>
+                    + &quot;covered by the station &quot; + &quot;n°: &quot; + stationNumber);
+<span class="nc" id="L269">            throw new NotFoundException(</span>
+                    &quot;No address is covered by the station n°: &quot;
+                            + stationNumber);
+        }
+<span class="fc" id="L273">        LOGGER.info(&quot;PersonsCoveredByStationService  -&gt; &quot; + persons.size()</span>
+                + &quot; persons found.&quot;);
+<span class="fc" id="L275">        List&lt;MedicalRecord&gt; medicalRecords = new ArrayList&lt;&gt;();</span>
+
+<span class="fc bfc" id="L277" title="All 2 branches covered.">        for (Person person : persons) {</span>
+<span class="fc" id="L278">            MedicalRecord medicalRecord = medicalRecordService.findByFirstNameAndLastName(</span>
+<span class="fc" id="L279">                    person.getFirstName(), person.getLastName());</span>
+<span class="fc" id="L280">            medicalRecords.add(medicalRecord);</span>
+<span class="fc" id="L281">        }</span>
+<span class="fc" id="L282">        CountAndPersonsCoveredDTO countAndPersonsCoveredDTO = mapping.convertPersonListToCountAndPersonsCoveredDTO(</span>
+                persons, medicalRecords);
+<span class="fc" id="L284">        return countAndPersonsCoveredDTO;</span>
+    }
+
+
+    /**
+     * Find persons covered by address and convert theme into a PersonFireDTO list.
+     *
+     * @param address the address
+     * @return PersonFireDTO list
+     */
+    public List&lt;PersonFireDTO&gt; getFireDtoListByStation(String address) {
+<span class="fc" id="L295">        List&lt;PersonFireDTO&gt; personFireDTOList = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L296">        List&lt;Integer&gt; listOfStations = firestationService.findStationByAddress(</span>
+                address);
+<span class="fc" id="L298">        List&lt;MedicalRecord&gt; medicalRecords = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L299" title="All 2 branches covered.">        for (Integer integer : listOfStations) {</span>
+<span class="fc" id="L300">            List&lt;Person&gt; personsCovered = findPersonByStation(integer);</span>
+<span class="fc bfc" id="L301" title="All 2 branches covered.">            for (Person person : personsCovered) {</span>
+<span class="fc" id="L302">                MedicalRecord medicalRecord = medicalRecordService.findByFirstNameAndLastName(</span>
+<span class="fc" id="L303">                        person.getFirstName(), person.getLastName());</span>
+<span class="fc bfc" id="L304" title="All 2 branches covered.">                if (medicalRecord != null)</span>
+<span class="fc" id="L305">                    medicalRecords.add(medicalRecord);</span>
+<span class="fc" id="L306">            }</span>
+<span class="fc" id="L307">            List&lt;PersonFireDTO&gt; personFireDTOListToAdd = mapping.convertPersonListToPersonFireList(</span>
+                    personsCovered, integer, medicalRecords);
+<span class="fc" id="L309">            personFireDTOList.addAll(personFireDTOListToAdd);</span>
+
+<span class="fc" id="L311">        }</span>
+
+<span class="fc" id="L313">        return personFireDTOList;</span>
+    }
+
+    /**
+     * Find person covered by station numbers and convert them into a FloodDTO list.
+     *
+     * @param station the station
+     * @return flood dto list
+     */
+    public List&lt;FloodDTO&gt; getFloodDtoListByStation(List&lt;Integer&gt; station) {
+<span class="fc" id="L323">        List&lt;FloodDTO&gt; floodDTOList = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L324">        List&lt;AddressDTO&gt; addressDtoList = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L325" title="All 2 branches covered.">        for (Integer integer : station) {</span>
+<span class="fc" id="L326">            List&lt;String&gt; firestationAddresses = (List&lt;String&gt;) firestationService</span>
+<span class="fc" id="L327">                    .findByStation(integer);</span>
+
+<span class="fc bfc" id="L329" title="All 2 branches covered.">            for (String firestationAddress : firestationAddresses) {</span>
+<span class="fc" id="L330">                List&lt;MedicalRecord&gt; medicalRecords = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L331">                List&lt;Person&gt; personsCovered = findPersonByAddress(</span>
+                        firestationAddress);
+<span class="fc bfc" id="L333" title="All 2 branches covered.">                for (Person person : personsCovered) {</span>
+<span class="fc" id="L334">                    MedicalRecord medicalRecord = medicalRecordService.findByFirstNameAndLastName(</span>
+<span class="fc" id="L335">                            person.getFirstName(), person.getLastName());</span>
+<span class="fc" id="L336">                    medicalRecords.add(medicalRecord);</span>
+<span class="fc" id="L337">                }</span>
+<span class="fc" id="L338">                AddressDTO addressDTO = mapping.createAddressDto(</span>
+                        firestationAddress, personsCovered, medicalRecords);
+<span class="fc" id="L340">                addressDtoList.add(addressDTO);</span>
+<span class="fc" id="L341">            }</span>
+
+<span class="fc" id="L343">            FloodDTO floodDTO = mapping.createFloodDTO(integer, addressDtoList);</span>
+<span class="fc" id="L344">            floodDTOList.add(floodDTO);</span>
+<span class="fc" id="L345">        }</span>
+
+<span class="fc" id="L347">        return floodDTOList;</span>
+    }
+
+    /**
+     * Find persons covered by address and convert them into a ChildAlertDTO object.
+     *
+     * @param address the address
+     * @return ChildAlertDTO object
+     */
+    public ChildAlertDTO getListOfChildrenByAddress(final String address) {
+<span class="fc" id="L357">        List&lt;Person&gt; personByAddressList = findPersonByAddress(address);</span>
+<span class="fc" id="L358">        List&lt;MedicalRecord&gt; medicalRecords = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L359" title="All 2 branches covered.">        for (Person person : personByAddressList) {</span>
+<span class="fc" id="L360">            MedicalRecord medicalRecord = medicalRecordService.findByFirstNameAndLastName(</span>
+<span class="fc" id="L361">                    person.getFirstName(), person.getLastName());</span>
+<span class="fc" id="L362">            medicalRecords.add(medicalRecord);</span>
+<span class="fc" id="L363">        }</span>
+<span class="fc" id="L364">        ChildAlertDTO childAlertDTO = mapping.createChildAlertDto(</span>
+                personByAddressList, medicalRecords);
+<span class="fc" id="L366">        LOGGER.info(</span>
+<span class="fc" id="L367">                &quot;PersonService -&gt; &quot; + childAlertDTO.getChildren().size() + &quot; &quot;</span>
+<span class="fc" id="L368">                        + &quot;children found / &quot; + childAlertDTO.getAdults().size()</span>
+                        + &quot; adults &quot; + &quot;founds&quot;);
+<span class="fc" id="L370">        return childAlertDTO;</span>
+    }
+
+    /**
+     * Find persons by first name and last name and convert theme into a PersonInfoDTO list.
+     *
+     * @param firstName the first name
+     * @param lastName  the last name
+     * @return person info list
+     */
+    public List&lt;PersonInfoDTO&gt; getPersonInfoList(String firstName,
+                                                 String lastName) {
+<span class="fc" id="L382">        List&lt;Person&gt; personList = findPersonsByFirstNameAndLastName(firstName,</span>
+                lastName);
+<span class="fc" id="L384">        List&lt;MedicalRecord&gt; medicalRecordList = medicalRecordService.findMedicalRecordsByFirstNameAndLastName(</span>
+                firstName, lastName);
+<span class="fc" id="L386">        List&lt;PersonInfoDTO&gt; personInfoDTOList = mapping.convertPersonListToPersonInfoDtoList(</span>
+                personList, medicalRecordList);
+<span class="fc" id="L388">        return personInfoDTOList;</span>
+    }
+
+    /**
+     * Get mail addresses from city.
+     *
+     * @param city the city
+     * @return the mail addresses from city
+     */
+    public List&lt;Person&gt; getMailAddressesFromCity(String city) {
+<span class="fc" id="L398">        List&lt;Person&gt; personsMailAddresses = (List&lt;Person&gt;) personRepository.findMailAddressesFromCity(</span>
+                city);
+<span class="fc" id="L400">        LOGGER.debug(&quot;Searching for mail addresses from persons who lives in: &quot;</span>
+                + city);
+
+<span class="fc bfc" id="L403" title="All 2 branches covered.">        if (personsMailAddresses.isEmpty()) {</span>
+<span class="fc" id="L404">            LOGGER.error(&quot;No persons covered in city: &quot; + city);</span>
+<span class="fc" id="L405">            throw new NotFoundException(&quot;No persons covered in city: &quot; + city);</span>
+        }
+<span class="fc" id="L407">        LOGGER.info(personsMailAddresses.size() + &quot; mail address(es) found&quot;);</span>
+<span class="fc" id="L408">        return personsMailAddresses;</span>
+    }
+
+    /**
+     * Get phone number by station.
+     *
+     * @param station the station
+     * @return the phone number by station
+     */
+    public List&lt;Person&gt; getPhoneNumberByStation(int station) {
+<span class="fc" id="L418">        List&lt;Person&gt; personsPhoneNumber = (List&lt;Person&gt;) personRepository.findPhoneNumberByStation(</span>
+                station);
+<span class="fc" id="L420">        LOGGER.debug(</span>
+                &quot;Searching for persons covered by station number: &quot; + station);
+
+<span class="fc bfc" id="L423" title="All 2 branches covered.">        if (personsPhoneNumber.isEmpty()) {</span>
+<span class="fc" id="L424">            LOGGER.error(</span>
+                    &quot;PersonService -&gt; No person covered by station: &quot; + station
+                            + &quot; found&quot;);
+<span class="fc" id="L427">            throw new NotFoundException(</span>
+                    &quot;PersonService -&gt; No person covered by station: &quot; + station
+                            + &quot; found&quot;);
+        }
+<span class="fc" id="L431">        LOGGER.info(personsPhoneNumber.size() + &quot; number(s) found&quot;);</span>
+<span class="fc" id="L432">        return personsPhoneNumber;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

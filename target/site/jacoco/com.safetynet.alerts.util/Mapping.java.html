@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Mapping.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">alerts</a> &gt; <a href="index.source.html" class="el_package">com.safetynet.alerts.util</a> &gt; <span class="el_source">Mapping.java</span></div><h1>Mapping.java</h1><pre class="source lang-java linenums">package com.safetynet.alerts.util;
+
+import com.safetynet.alerts.model.MedicalRecord;
+import com.safetynet.alerts.model.Person;
+import com.safetynet.alerts.model.dto.AddressDTO;
+import com.safetynet.alerts.model.dto.ChildAlertDTO;
+import com.safetynet.alerts.model.dto.CountAndPersonsCoveredDTO;
+import com.safetynet.alerts.model.dto.FloodDTO;
+import com.safetynet.alerts.model.dto.PersonFireDTO;
+import com.safetynet.alerts.model.dto.PersonInfoDTO;
+import com.safetynet.alerts.model.dto.PersonsCoveredByStationDTO;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Mapping.
+ *
+ * @author Gwen
+ * @version 1.0
+ */
+@Component
+public class Mapping {
+
+
+    /**
+     * @see AgeCountCalculator
+     */
+    private AgeCountCalculator ageCountCalculator;
+
+    /**
+     * Instantiates a new Mapping.
+     *
+     * @param ageCountCalculator the age count calculator
+     */
+<span class="fc" id="L37">    public Mapping(AgeCountCalculator ageCountCalculator) {</span>
+<span class="fc" id="L38">        this.ageCountCalculator = ageCountCalculator;</span>
+<span class="fc" id="L39">    }</span>
+
+    /**
+     * Convert Person list to PersonsCoveredByStationDTO list.
+     *
+     * @param persons        the persons
+     * @param medicalRecords the medical records
+     * @return PersonCoveredByStationDTO list
+     */
+    public List&lt;PersonsCoveredByStationDTO&gt; convertPersonListToPersonsCoveredByStationDtoList(
+            final List&lt;Person&gt; persons,
+            final List&lt;MedicalRecord&gt; medicalRecords) {
+<span class="fc" id="L51">        List&lt;PersonsCoveredByStationDTO&gt; personsDTO = new ArrayList&lt;&gt;();</span>
+
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        for (Person person : persons) {</span>
+
+<span class="fc" id="L55">            MedicalRecord medicalRecord = mapMedicalRecordsWithPerson(person,</span>
+                    medicalRecords);
+<span class="fc" id="L57">            PersonsCoveredByStationDTO personsCoveredByStationDTO = convertPersonToPersonsCoveredByStationsDto(</span>
+                    person, medicalRecord);
+<span class="fc" id="L59">            personsDTO.add(personsCoveredByStationDTO);</span>
+
+<span class="fc" id="L61">        }</span>
+<span class="fc" id="L62">        return personsDTO;</span>
+    }
+
+    /**
+     * Convert Person to PersonsCoveredByStationDTO.
+     *
+     * @param person        the person
+     * @param medicalRecord the medical record
+     * @return PersonsCoveredByStationDTO object
+     */
+    public PersonsCoveredByStationDTO convertPersonToPersonsCoveredByStationsDto(
+            final Person person, final MedicalRecord medicalRecord) {
+<span class="fc" id="L74">        PersonsCoveredByStationDTO persDto = new PersonsCoveredByStationDTO();</span>
+<span class="fc" id="L75">        persDto.setFirstName(person.getFirstName());</span>
+<span class="fc" id="L76">        persDto.setLastName(person.getLastName());</span>
+<span class="fc" id="L77">        persDto.setAddress(person.getAddress());</span>
+<span class="fc" id="L78">        persDto.setCity(person.getCity());</span>
+<span class="fc" id="L79">        persDto.setZip(person.getZip());</span>
+<span class="fc" id="L80">        persDto.setPhone(person.getPhone());</span>
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">        persDto.setAge(medicalRecord != null ? ageCountCalculator.calculateAge(</span>
+<span class="pc" id="L82">                medicalRecord.getBirthDate()) : -1);</span>
+<span class="fc" id="L83">        return persDto;</span>
+    }
+
+    /**
+     * Convert Person list to PersonInfoDTO list.
+     *
+     * @param persons        the persons
+     * @param medicalRecords the medical records
+     * @return PersonInfoDTO list
+     */
+    public List&lt;PersonInfoDTO&gt; convertPersonListToPersonInfoDtoList(
+            final List&lt;Person&gt; persons,
+            final List&lt;MedicalRecord&gt; medicalRecords) {
+<span class="fc" id="L96">        List&lt;PersonInfoDTO&gt; personsInfoDTO = new ArrayList&lt;&gt;();</span>
+
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        for (Person person : persons) {</span>
+<span class="fc" id="L99">            MedicalRecord medicalRecord = mapMedicalRecordsWithPerson(person,</span>
+                    medicalRecords);
+<span class="fc" id="L101">            PersonInfoDTO personInfoDTO = convertPersonToPersonInfoDto(person,</span>
+                    medicalRecord);
+<span class="fc" id="L103">            personsInfoDTO.add(personInfoDTO);</span>
+
+<span class="fc" id="L105">        }</span>
+
+<span class="fc" id="L107">        return personsInfoDTO;</span>
+    }
+
+    /**
+     * Convert Person to PersonInfoDTO object.
+     *
+     * @param person        the person
+     * @param medicalRecord the medical record
+     * @return PersonInfoDTO object
+     */
+    public PersonInfoDTO convertPersonToPersonInfoDto(final Person person,
+                                                      final MedicalRecord medicalRecord) {
+<span class="fc" id="L119">        PersonInfoDTO personInfoDTO = new PersonInfoDTO();</span>
+<span class="fc" id="L120">        personInfoDTO.setFirstName(person.getFirstName());</span>
+<span class="fc" id="L121">        personInfoDTO.setLastName(person.getLastName());</span>
+<span class="fc" id="L122">        personInfoDTO.setPhone(person.getPhone());</span>
+<span class="fc" id="L123">        personInfoDTO.setAge(</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">                medicalRecord != null ? ageCountCalculator.calculateAge(</span>
+<span class="fc" id="L125">                        medicalRecord.getBirthDate()) : -1);</span>
+<span class="fc" id="L126">        personInfoDTO.setAllergies(</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">                medicalRecord != null ? medicalRecord.getAllergies()</span>
+<span class="fc" id="L128">                        : new String[]{&quot;No medical record found&quot;});</span>
+<span class="fc" id="L129">        personInfoDTO.setMedications(</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">                medicalRecord != null ? medicalRecord.getMedications()</span>
+<span class="fc" id="L131">                        : new String[]{&quot;No medical record found&quot;});</span>
+<span class="fc" id="L132">        return personInfoDTO;</span>
+    }
+
+    /**
+     * Convert Person list to PersonFireDTO list.
+     *
+     * @param persons        the persons
+     * @param station        the station
+     * @param medicalRecords the medical records
+     * @return PersonFireDTO list
+     */
+    public List&lt;PersonFireDTO&gt; convertPersonListToPersonFireList(
+            final List&lt;Person&gt; persons, final Integer station,
+            final List&lt;MedicalRecord&gt; medicalRecords) {
+<span class="fc" id="L146">        List&lt;PersonFireDTO&gt; personFireDTOList = new ArrayList&lt;&gt;();</span>
+
+<span class="fc bfc" id="L148" title="All 2 branches covered.">        for (Person person : persons) {</span>
+<span class="fc" id="L149">            MedicalRecord medicalRecord = mapMedicalRecordsWithPerson(person,</span>
+                    medicalRecords);
+<span class="fc" id="L151">            PersonFireDTO personFireDTO = convertPersonToPersonFireDto(person,</span>
+                    medicalRecord);
+<span class="fc" id="L153">            personFireDTO.setStationNumber(station);</span>
+<span class="fc" id="L154">            personFireDTOList.add(personFireDTO);</span>
+
+<span class="fc" id="L156">        }</span>
+
+<span class="fc" id="L158">        return personFireDTOList;</span>
+    }
+
+    /**
+     * Convert Person to PersonFireDTO object.
+     *
+     * @param person        the person
+     * @param medicalRecord the medical record
+     * @return PersonFireDTO object
+     */
+    public PersonFireDTO convertPersonToPersonFireDto(final Person person,
+                                                      final MedicalRecord medicalRecord) {
+<span class="fc" id="L170">        PersonFireDTO personFireDTO = new PersonFireDTO();</span>
+<span class="fc" id="L171">        personFireDTO.setFirstName(person.getFirstName());</span>
+<span class="fc" id="L172">        personFireDTO.setLastName(person.getLastName());</span>
+<span class="fc" id="L173">        personFireDTO.setPhone(person.getPhone());</span>
+<span class="fc" id="L174">        personFireDTO.setAge(</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">                medicalRecord != null ? ageCountCalculator.calculateAge(</span>
+<span class="fc" id="L176">                        medicalRecord.getBirthDate()) : -1);</span>
+<span class="fc" id="L177">        personFireDTO.setAllergies(</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">                medicalRecord != null ? medicalRecord.getAllergies()</span>
+<span class="fc" id="L179">                        : new String[]{&quot;No medical record found&quot;});</span>
+<span class="fc" id="L180">        personFireDTO.setMedications(</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">                medicalRecord != null ? medicalRecord.getMedications()</span>
+<span class="fc" id="L182">                        : new String[]{&quot;No medical record found&quot;});</span>
+<span class="fc" id="L183">        return personFireDTO;</span>
+    }
+
+
+    /**
+     * Convert Person list to CountAndPersonsCoveredDTO object.
+     *
+     * @param persons        the persons
+     * @param medicalRecords the medical records
+     * @return CountAndPersonsCoveredDTO object
+     */
+    public CountAndPersonsCoveredDTO convertPersonListToCountAndPersonsCoveredDTO(
+            final List&lt;Person&gt; persons,
+            final List&lt;MedicalRecord&gt; medicalRecords) {
+<span class="fc" id="L197">        CountAndPersonsCoveredDTO countAndPersonsCoveredDTO = new CountAndPersonsCoveredDTO();</span>
+
+<span class="fc" id="L199">        countAndPersonsCoveredDTO.setPersonsCovered(</span>
+<span class="fc" id="L200">                convertPersonListToPersonsCoveredByStationDtoList(persons,</span>
+                        medicalRecords));
+
+<span class="fc" id="L203">        countAndPersonsCoveredDTO.setCountOfChildren(</span>
+<span class="fc" id="L204">                ageCountCalculator.countNumberOfChildren(</span>
+<span class="fc" id="L205">                        countAndPersonsCoveredDTO.getPersonsCovered()));</span>
+<span class="fc" id="L206">        countAndPersonsCoveredDTO.setCountOfAdults(</span>
+<span class="fc" id="L207">                countAndPersonsCoveredDTO.getPersonsCovered().size()</span>
+<span class="fc" id="L208">                        - countAndPersonsCoveredDTO.getCountOfChildren());</span>
+
+<span class="fc" id="L210">        return countAndPersonsCoveredDTO;</span>
+    }
+
+    /**
+     * Create ChildAlertDTO object.
+     *
+     * @param personList     the person list
+     * @param medicalRecords the medical records
+     * @return ChildAlertDTO object
+     */
+    public ChildAlertDTO createChildAlertDto(final List&lt;Person&gt; personList,
+                                             final List&lt;MedicalRecord&gt; medicalRecords) {
+<span class="fc" id="L222">        ChildAlertDTO childAlertDTO = new ChildAlertDTO();</span>
+<span class="fc" id="L223">        List&lt;PersonsCoveredByStationDTO&gt; personsCoveredByStationDTOList = convertPersonListToPersonsCoveredByStationDtoList(</span>
+                personList, medicalRecords);
+<span class="fc" id="L225">        List&lt;PersonsCoveredByStationDTO&gt; adults = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L226">        List&lt;PersonsCoveredByStationDTO&gt; children = new ArrayList&lt;&gt;();</span>
+
+<span class="fc bfc" id="L228" title="All 2 branches covered.">        for (PersonsCoveredByStationDTO person : personsCoveredByStationDTOList) {</span>
+<span class="fc" id="L229">            MedicalRecord medicalRecord = mapMedicalRecordsWithPersonCoveredByStationDTO(</span>
+                    person, medicalRecords);
+<span class="pc bpc" id="L231" title="1 of 2 branches missed.">            int age = medicalRecord != null ? ageCountCalculator.calculateAge(</span>
+<span class="pc" id="L232">                    medicalRecord.getBirthDate()) : -1;</span>
+<span class="fc bfc" id="L233" title="All 2 branches covered.">            if (age &lt;= 18) {</span>
+<span class="fc" id="L234">                children.add(person);</span>
+            } else {
+<span class="fc" id="L236">                adults.add(person);</span>
+            }
+
+<span class="fc" id="L239">        }</span>
+<span class="fc" id="L240">        childAlertDTO.setAdults(adults);</span>
+<span class="fc" id="L241">        childAlertDTO.setChildren(children);</span>
+<span class="fc" id="L242">        return childAlertDTO;</span>
+    }
+
+
+    /**
+     * Create AddressDTO object.
+     *
+     * @param address           the address
+     * @param personInfoDTOList the person info dto list
+     * @param medicalRecords    the medical records
+     * @return AddressDTO object
+     */
+    public AddressDTO createAddressDto(final String address,
+                                       final List&lt;Person&gt; personInfoDTOList,
+                                       final List&lt;MedicalRecord&gt; medicalRecords) {
+<span class="fc" id="L257">        AddressDTO addressDTO = new AddressDTO();</span>
+<span class="fc" id="L258">        addressDTO.setHouseHold(address);</span>
+<span class="fc" id="L259">        addressDTO.setPersonInfoList(</span>
+<span class="fc" id="L260">                convertPersonListToPersonInfoDtoList(personInfoDTOList,</span>
+                        medicalRecords));
+
+<span class="fc" id="L263">        return addressDTO;</span>
+
+    }
+
+    /**
+     * Create FloodDTO object.
+     *
+     * @param station        the station
+     * @param addressDTOList the address dto list
+     * @return FloodDTO object
+     */
+    public FloodDTO createFloodDTO(final Integer station,
+                                   final List&lt;AddressDTO&gt; addressDTOList) {
+<span class="fc" id="L276">        FloodDTO floodDTO = new FloodDTO();</span>
+<span class="fc" id="L277">        floodDTO.setStation(station);</span>
+<span class="fc" id="L278">        floodDTO.setHouseHoldCovered(addressDTOList);</span>
+
+<span class="fc" id="L280">        return floodDTO;</span>
+    }
+
+    /**
+     * Map medical records with person covered by station dto.
+     *
+     * @param person         the person
+     * @param medicalRecords the medical records
+     * @return the medical record who matches by first name and last name with person
+     */
+    public MedicalRecord mapMedicalRecordsWithPersonCoveredByStationDTO(
+            PersonsCoveredByStationDTO person,
+            List&lt;MedicalRecord&gt; medicalRecords) {
+<span class="fc" id="L293">        MedicalRecord medicalRecordToReturn = null;</span>
+<span class="fc bfc" id="L294" title="All 2 branches covered.">        for (MedicalRecord medicalRecord : medicalRecords) {</span>
+
+<span class="fc" id="L296">            if (person</span>
+<span class="fc" id="L297">                    .getFirstName()</span>
+<span class="fc bfc" id="L298" title="All 2 branches covered.">                    .equalsIgnoreCase(medicalRecord.getFirstName()) &amp;&amp; person</span>
+<span class="fc" id="L299">                    .getLastName()</span>
+<span class="pc bpc" id="L300" title="1 of 2 branches missed.">                    .equalsIgnoreCase(medicalRecord.getLastName())) {</span>
+<span class="fc" id="L301">                medicalRecordToReturn = medicalRecord;</span>
+            }
+<span class="fc" id="L303">        }</span>
+<span class="fc" id="L304">        return medicalRecordToReturn;</span>
+    }
+
+    /**
+     * Map medical records with person.
+     *
+     * @param person         the person
+     * @param medicalRecords the medical records
+     * @return the medical record who matches by first name and last name with person
+     */
+    public MedicalRecord mapMedicalRecordsWithPerson(Person person,
+                                                     List&lt;MedicalRecord&gt; medicalRecords) {
+<span class="fc" id="L316">        MedicalRecord medicalRecordToReturn = null;</span>
+<span class="fc bfc" id="L317" title="All 2 branches covered.">        for (MedicalRecord medicalRecord : medicalRecords) {</span>
+<span class="fc" id="L318">            if (person</span>
+<span class="fc" id="L319">                    .getFirstName()</span>
+<span class="fc bfc" id="L320" title="All 2 branches covered.">                    .equalsIgnoreCase(medicalRecord.getFirstName()) &amp;&amp; person</span>
+<span class="fc" id="L321">                    .getLastName()</span>
+<span class="pc bpc" id="L322" title="1 of 2 branches missed.">                    .equalsIgnoreCase(medicalRecord.getLastName())) {</span>
+<span class="fc" id="L323">                medicalRecordToReturn = medicalRecord;</span>
+            }
+<span class="fc" id="L325">        }</span>
+<span class="fc" id="L326">        return medicalRecordToReturn;</span>
+    }
+
+    /**
+     * Map medical records with PersonInfoDTO.
+     *
+     * @param person         the person
+     * @param medicalRecords the medical records
+     * @return the medical record who matches by first name and last name with person
+     */
+    public MedicalRecord mapMedicalRecordsWithPersonInfoDTO(
+            PersonInfoDTO person, List&lt;MedicalRecord&gt; medicalRecords) {
+<span class="fc" id="L338">        MedicalRecord medicalRecordToReturn = null;</span>
+<span class="fc bfc" id="L339" title="All 2 branches covered.">        for (MedicalRecord medicalRecord : medicalRecords) {</span>
+
+<span class="fc" id="L341">            if (person</span>
+<span class="fc" id="L342">                    .getFirstName()</span>
+<span class="fc bfc" id="L343" title="All 2 branches covered.">                    .equalsIgnoreCase(medicalRecord.getFirstName()) &amp;&amp; person</span>
+<span class="fc" id="L344">                    .getLastName()</span>
+<span class="pc bpc" id="L345" title="1 of 2 branches missed.">                    .equalsIgnoreCase(medicalRecord.getLastName())) {</span>
+<span class="fc" id="L346">                medicalRecordToReturn = medicalRecord;</span>
+            }
+<span class="fc" id="L348">        }</span>
+<span class="fc" id="L349">        return medicalRecordToReturn;</span>
+    }
+}
+
+
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

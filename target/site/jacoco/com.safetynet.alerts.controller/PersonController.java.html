@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PersonController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">alerts</a> &gt; <a href="index.source.html" class="el_package">com.safetynet.alerts.controller</a> &gt; <span class="el_source">PersonController.java</span></div><h1>PersonController.java</h1><pre class="source lang-java linenums">package com.safetynet.alerts.controller;
+
+import com.safetynet.alerts.model.Person;
+import com.safetynet.alerts.service.PersonService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import javax.validation.Valid;
+import java.net.URI;
+
+/**
+ * Person controller.
+ *
+ * @author Gwen
+ * @version 1.0
+ */
+@RestController
+public class PersonController {
+
+    /**
+     * @see Logger
+     */
+<span class="fc" id="L32">    private static final Logger LOGGER = LogManager.getLogger(</span>
+            PersonController.class);
+
+
+    /**
+     * @see PersonService
+     */
+    private PersonService personService;
+
+    /**
+     * Instantiates a new Person controller.
+     *
+     * @param personService the person service
+     */
+<span class="fc" id="L46">    public PersonController(PersonService personService) {</span>
+<span class="fc" id="L47">        this.personService = personService;</span>
+<span class="fc" id="L48">    }</span>
+
+    /**
+     * Get all persons.
+     *
+     * @return the persons
+     */
+    @GetMapping(&quot;/person&quot;)
+    public Iterable&lt;Person&gt; getPersons() {
+<span class="fc" id="L57">        LOGGER.info(&quot;PersonController (GET) -&gt; Get all persons &quot;);</span>
+<span class="fc" id="L58">        return personService.findAll();</span>
+    }
+
+    /**
+     * Add person.
+     *
+     * @param person the person
+     * @return the response entity
+     */
+    @PostMapping(&quot;/person&quot;)
+    public ResponseEntity&lt;Void&gt; addPerson(
+            @Valid @RequestBody final Person person) {
+<span class="fc" id="L70">        Person personToSave = personService.save(person);</span>
+        URI location = ServletUriComponentsBuilder
+<span class="fc" id="L72">                .fromCurrentRequest()</span>
+<span class="fc" id="L73">                .path(&quot;/{id}&quot;)</span>
+<span class="fc" id="L74">                .buildAndExpand(personToSave.getId())</span>
+<span class="fc" id="L75">                .toUri();</span>
+<span class="fc" id="L76">        LOGGER.info(&quot;PersonController (POST) -&gt; Person successfully added: &quot;</span>
+<span class="fc" id="L77">                + personToSave.toString());</span>
+<span class="fc" id="L78">        return ResponseEntity.created(location).build();</span>
+    }
+
+    /**
+     * Update person.
+     *
+     * @param firstName the first name
+     * @param lastName  the last name
+     * @param person    the person
+     * @return the response entity
+     */
+    @PutMapping(&quot;/person&quot;)
+    public ResponseEntity&lt;Person&gt; updatePerson(
+            @RequestParam(value = &quot;firstName&quot;) final String firstName,
+            @RequestParam(value = &quot;lastName&quot;) final String lastName,
+            @Valid @RequestBody final Person person) {
+
+<span class="fc" id="L95">        Person personToUpdate = personService.findByFirstNameAndLastName(</span>
+                firstName, lastName);
+<span class="fc" id="L97">        Person personUpdated = personService.updatePerson(person,</span>
+                personToUpdate);
+<span class="fc" id="L99">        final Person personSaved = personService.saveUpdated(personToUpdate);</span>
+<span class="fc" id="L100">        LOGGER.info(&quot;PersonController (PUT) -&gt; Successfully updated person: &quot;</span>
+<span class="fc" id="L101">                + personUpdated.toString());</span>
+<span class="fc" id="L102">        return ResponseEntity.ok(personSaved);</span>
+
+    }
+
+    /**
+     * Delete person.
+     *
+     * @param firstName the first name
+     * @param lastName  the last name
+     * @return the response entity
+     */
+    @DeleteMapping(&quot;/person&quot;)
+    public ResponseEntity&lt;Void&gt; deletePerson(
+            @RequestParam(value = &quot;firstName&quot;) final String firstName,
+            @RequestParam(value = &quot;lastName&quot;) final String lastName) {
+<span class="fc" id="L117">        Person personToDelete = personService.findByFirstNameAndLastName(</span>
+                firstName, lastName);
+<span class="fc" id="L119">        personService.deletePerson(personToDelete);</span>
+<span class="fc" id="L120">        LOGGER.info(&quot;PersonController (DEL) -&gt; Successfully deleted person: &quot;</span>
+<span class="fc" id="L121">                + personToDelete.toString());</span>
+<span class="fc" id="L122">        return ResponseEntity.ok().build();</span>
+
+    }
+}
+
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

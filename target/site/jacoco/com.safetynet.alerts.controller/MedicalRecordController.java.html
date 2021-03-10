@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MedicalRecordController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">alerts</a> &gt; <a href="index.source.html" class="el_package">com.safetynet.alerts.controller</a> &gt; <span class="el_source">MedicalRecordController.java</span></div><h1>MedicalRecordController.java</h1><pre class="source lang-java linenums">package com.safetynet.alerts.controller;
+
+import com.safetynet.alerts.model.MedicalRecord;
+import com.safetynet.alerts.service.MedicalRecordService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import javax.validation.Valid;
+import java.net.URI;
+
+/**
+ * Medical record controller.
+ *
+ * @author Gwen
+ * @version 1.0
+ */
+@RestController
+public class MedicalRecordController {
+
+    /**
+     * @see Logger
+     */
+<span class="fc" id="L32">    private static final Logger LOGGER = LogManager.getLogger(</span>
+            MedicalRecordController.class);
+
+    /**
+     * @see MedicalRecordService
+     */
+    private MedicalRecordService medicalRecordService;
+
+    /**
+     * Instantiates a new Medical record controller.
+     *
+     * @param medicalRecordService the medical record service
+     */
+<span class="fc" id="L45">    public MedicalRecordController(MedicalRecordService medicalRecordService) {</span>
+<span class="fc" id="L46">        this.medicalRecordService = medicalRecordService;</span>
+<span class="fc" id="L47">    }</span>
+
+    /**
+     * Get all medical records.
+     *
+     * @return the iterable
+     */
+    @GetMapping(&quot;/medicalRecord&quot;)
+    public Iterable&lt;MedicalRecord&gt; list() {
+<span class="fc" id="L56">        return medicalRecordService.findAll();</span>
+    }
+
+
+    /**
+     * Add medical record.
+     *
+     * @param medicalRecord the medical record
+     * @return the response entity
+     */
+    @PostMapping(&quot;/medicalRecord&quot;)
+    public ResponseEntity&lt;Void&gt; addMedicalRecord(
+            @Valid @RequestBody final MedicalRecord medicalRecord) {
+<span class="fc" id="L69">        MedicalRecord medicalRecordToSave = medicalRecordService.save(</span>
+                medicalRecord);
+        URI location = ServletUriComponentsBuilder
+<span class="fc" id="L72">                .fromCurrentRequest()</span>
+<span class="fc" id="L73">                .path(&quot;/{id}&quot;)</span>
+<span class="fc" id="L74">                .buildAndExpand(medicalRecordToSave.getId())</span>
+<span class="fc" id="L75">                .toUri();</span>
+<span class="fc" id="L76">        LOGGER.info(&quot;MedicalRecordController (POST) -&gt; Medical record &quot;</span>
+<span class="fc" id="L77">                + &quot;successfully added: &quot; + medicalRecordToSave.toString());</span>
+<span class="fc" id="L78">        return ResponseEntity.created(location).build();</span>
+    }
+
+    /**
+     * Update medical record.
+     *
+     * @param firstName     the first name
+     * @param lastName      the last name
+     * @param medicalRecord the medical record
+     * @return the response entity
+     */
+    @PutMapping(&quot;/medicalRecord&quot;)
+    public ResponseEntity&lt;MedicalRecord&gt; updateMedicalRecord(
+            @RequestParam(value = &quot;firstName&quot;) final String firstName,
+            @RequestParam(value = &quot;lastName&quot;) final String lastName,
+            @Valid @RequestBody final MedicalRecord medicalRecord) {
+
+<span class="fc" id="L95">        MedicalRecord medicalRecordToUpdate = medicalRecordService.findByFirstNameAndLastName(</span>
+                firstName, lastName);
+<span class="fc" id="L97">        MedicalRecord medicalRecordUpdated = medicalRecordService.updateMedicalRecord(</span>
+                medicalRecord, medicalRecordToUpdate);
+<span class="fc" id="L99">        MedicalRecord medicalRecordSaved = medicalRecordService.saveUpdated(</span>
+                medicalRecordUpdated);
+
+<span class="fc" id="L102">        LOGGER.info(&quot;MedicalRecordController (PUT) -&gt; Medical record &quot;</span>
+                + &quot;successfully &quot; + &quot;updated: &quot;
+<span class="fc" id="L104">                + medicalRecordUpdated.toString());</span>
+<span class="fc" id="L105">        return ResponseEntity.ok(medicalRecordSaved);</span>
+
+    }
+
+    /**
+     * Delete medical record.
+     *
+     * @param firstName the first name
+     * @param lastName  the last name
+     * @return the response entity
+     */
+    @DeleteMapping(&quot;/medicalRecord&quot;)
+    public ResponseEntity&lt;Void&gt; deleteMedicalRecord(
+            @RequestParam(value = &quot;firstName&quot;) final String firstName,
+            @RequestParam(value = &quot;lastName&quot;) final String lastName) {
+<span class="fc" id="L120">        MedicalRecord medicalRecordToDelete = medicalRecordService.findByFirstNameAndLastName(</span>
+                firstName, lastName);
+<span class="fc" id="L122">        medicalRecordService.deleteMedicalRecord(medicalRecordToDelete);</span>
+<span class="fc" id="L123">        LOGGER.info(</span>
+                &quot;MedicalRecordController (DEL) -&gt; Med: &quot; + medicalRecordToDelete
+<span class="fc" id="L125">                        .toString());</span>
+<span class="fc" id="L126">        return ResponseEntity.ok().build();</span>
+
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FirestationController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">alerts</a> &gt; <a href="index.source.html" class="el_package">com.safetynet.alerts.controller</a> &gt; <span class="el_source">FirestationController.java</span></div><h1>FirestationController.java</h1><pre class="source lang-java linenums">package com.safetynet.alerts.controller;
+
+import com.safetynet.alerts.model.Firestation;
+import com.safetynet.alerts.model.dto.CountAndPersonsCoveredDTO;
+import com.safetynet.alerts.service.FirestationService;
+import com.safetynet.alerts.service.PersonService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import javax.validation.Valid;
+import java.net.URI;
+
+/**
+ * Firestation controller.
+ */
+@RestController
+public class FirestationController {
+
+    /**
+     * @see Logger
+     */
+<span class="fc" id="L25">    private static final Logger LOGGER = LogManager.getLogger(</span>
+            FirestationController.class);
+
+    /**
+     * @see FirestationService
+     */
+    FirestationService firestationService;
+
+    /**
+     * @see PersonService
+     */
+    PersonService personService;
+
+    /**
+     * Instantiates a new Firestation controller.
+     *
+     * @param firestationService the firestation service
+     * @param personService      the person service
+     */
+    public FirestationController(FirestationService firestationService,
+<span class="fc" id="L45">            PersonService personService) {</span>
+<span class="fc" id="L46">        this.firestationService = firestationService;</span>
+<span class="fc" id="L47">        this.personService = personService;</span>
+<span class="fc" id="L48">    }</span>
+
+    /**
+     * Gets persons covered by station id.
+     *
+     * @param stationNumber the station number
+     * @return the persons covered by station id
+     */
+    @GetMapping(&quot;/firestation&quot;)
+    public CountAndPersonsCoveredDTO getPersonsCoveredByStationId(
+            @RequestParam final int stationNumber) {
+<span class="fc" id="L59">        LOGGER.info(</span>
+                &quot;FireStationController (GET) -&gt; Getting all persons covered &quot;
+                        + &quot;by station number: &quot; + stationNumber);
+<span class="fc" id="L62">        return personService.findPersonsWithStationNumber(stationNumber);</span>
+
+    }
+
+    /**
+     * Add firestation.
+     *
+     * @param firestation the firestation
+     * @return the response entity
+     */
+    @PostMapping(&quot;/firestation&quot;)
+    public ResponseEntity&lt;Void&gt; addFirestation(
+            @Valid @RequestBody final Firestation firestation) {
+<span class="fc" id="L75">        Firestation firestationToSave = firestationService.save(firestation);</span>
+
+        URI location = ServletUriComponentsBuilder
+<span class="fc" id="L78">                .fromCurrentRequest()</span>
+<span class="fc" id="L79">                .path(&quot;/{id}&quot;)</span>
+<span class="fc" id="L80">                .buildAndExpand(firestationToSave.getId())</span>
+<span class="fc" id="L81">                .toUri();</span>
+<span class="fc" id="L82">        LOGGER.info(&quot;FireStationController (POST) -&gt; Fire station &quot;</span>
+<span class="fc" id="L83">                + &quot;successfully added: &quot; + firestationToSave.toString());</span>
+<span class="fc" id="L84">        return ResponseEntity.created(location).build();</span>
+    }
+
+    /**
+     * Update firestation.
+     *
+     * @param address     the address
+     * @param station     the station
+     * @param firestation the firestation
+     * @return the response entity
+     */
+    @PutMapping(&quot;/firestation&quot;)
+    public ResponseEntity&lt;Firestation&gt; updateFirestation(
+            @RequestParam final String address, @RequestParam final int station,
+            @Valid @RequestBody final Firestation firestation) {
+
+<span class="fc" id="L100">        Firestation firestationToUpdate = firestationService.findFirestationByAddressAndStation(</span>
+                address, station);
+<span class="fc" id="L102">        Firestation firestationUpdated = firestationService.updateFirestation(</span>
+                firestation, firestationToUpdate);
+<span class="fc" id="L104">        Firestation firestationSaved = firestationService.saveUpdated(</span>
+                firestationUpdated);
+
+<span class="fc" id="L107">        LOGGER.info(&quot;FirestationController (PUT) -&gt; Successfully updated fire &quot;</span>
+<span class="fc" id="L108">                + &quot;station: &quot; + firestationUpdated.toString());</span>
+<span class="fc" id="L109">        return ResponseEntity.ok(firestationSaved);</span>
+
+    }
+
+    /**
+     * Delete fire station.
+     *
+     * @param address the address
+     * @param station the station
+     * @return the response entity
+     */
+    @DeleteMapping(&quot;/firestation&quot;)
+    public ResponseEntity&lt;Void&gt; deleteFireStation(
+            @RequestParam(value = &quot;address&quot;) final String address,
+            @RequestParam(value = &quot;station&quot;) final int station) {
+<span class="fc" id="L124">        Firestation firestationToDelete = firestationService.findFirestationByAddressAndStation(</span>
+                address, station);
+<span class="fc" id="L126">        firestationService.deleteFirestation(firestationToDelete);</span>
+<span class="fc" id="L127">        LOGGER.info(&quot;FirestationController (DEL) -&gt; Successfully deleted fire &quot;</span>
+<span class="fc" id="L128">                + &quot;station: &quot; + firestationToDelete.toString());</span>
+<span class="fc" id="L129">        return ResponseEntity.ok().build();</span>
+
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

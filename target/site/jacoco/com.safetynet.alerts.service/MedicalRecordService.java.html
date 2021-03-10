@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MedicalRecordService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">alerts</a> &gt; <a href="index.source.html" class="el_package">com.safetynet.alerts.service</a> &gt; <span class="el_source">MedicalRecordService.java</span></div><h1>MedicalRecordService.java</h1><pre class="source lang-java linenums">package com.safetynet.alerts.service;
+
+import com.safetynet.alerts.exceptions.AlreadyExistingException;
+import com.safetynet.alerts.exceptions.NotFoundException;
+import com.safetynet.alerts.model.MedicalRecord;
+import com.safetynet.alerts.repository.MedicalRecordRepository;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
+
+/**
+ * Medical record service.
+ *
+ * @author Gwen
+ * @version 1.0
+ */
+@Service
+public class MedicalRecordService {
+
+    /**
+     * @see Logger
+     */
+<span class="fc" id="L26">    private static final Logger LOGGER = LogManager.getLogger(</span>
+            MedicalRecordService.class);
+
+    /**
+     * @see MedicalRecordRepository
+     */
+    private MedicalRecordRepository medicalRecordRepository;
+
+    /**
+     * Instantiates a new Medical record service.
+     *
+     * @param medicalRecordRepository the medical record repository
+     */
+    public MedicalRecordService(
+<span class="fc" id="L40">            MedicalRecordRepository medicalRecordRepository) {</span>
+<span class="fc" id="L41">        this.medicalRecordRepository = medicalRecordRepository;</span>
+<span class="fc" id="L42">    }</span>
+
+    /**
+     * Find all medical records.
+     *
+     * @return medical records
+     */
+    public Iterable&lt;MedicalRecord&gt; findAll() {
+<span class="fc" id="L50">        return medicalRecordRepository.findAll();</span>
+    }
+
+    /**
+     * Save medical record.
+     *
+     * @param medicalRecord the medical record
+     * @return the medical record saved
+     * @throws AlreadyExistingException if medical record is already existing
+     */
+    public MedicalRecord save(MedicalRecord medicalRecord) {
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        if (existsMedicalRecordByFirstNameAndLastName(</span>
+<span class="fc" id="L62">                medicalRecord.getFirstName(), medicalRecord.getLastName())) {</span>
+<span class="fc" id="L63">            LOGGER.error(&quot;MedicalRecordService -&gt; Medical record for: &quot;</span>
+<span class="fc" id="L64">                    + medicalRecord.getFirstName() + &quot; &quot;</span>
+<span class="fc" id="L65">                    + medicalRecord.getLastName() + &quot; is already existing&quot;);</span>
+<span class="fc" id="L66">            throw new AlreadyExistingException(</span>
+                    &quot;MedicalRecordService -&gt; Medical record for: &quot;
+<span class="fc" id="L68">                            + medicalRecord.getFirstName() + &quot; &quot; + medicalRecord</span>
+<span class="fc" id="L69">                            .getLastName() + &quot; is already existing.&quot;);</span>
+        }
+<span class="fc" id="L71">        return medicalRecordRepository.save(medicalRecord);</span>
+    }
+
+    /**
+     * Save updated medical record.
+     *
+     * @param medicalRecord the medical record
+     * @return the medical record saved
+     */
+    public MedicalRecord saveUpdated(MedicalRecord medicalRecord) {
+<span class="fc" id="L81">        return medicalRecordRepository.save(medicalRecord);</span>
+    }
+
+    /**
+     * Save all medical records.
+     *
+     * @param medicalRecords the medical records
+     * @return list of medical records saved
+     */
+    public Iterable&lt;MedicalRecord&gt; saveAll(
+            Iterable&lt;MedicalRecord&gt; medicalRecords) {
+<span class="fc" id="L92">        return medicalRecordRepository.saveAll(medicalRecords);</span>
+    }
+
+    /**
+     * Find  medical record by first name and last name.
+     *
+     * @param firstName the first name
+     * @param lastName  the last name
+     * @return the medical record
+     * @throws NotFoundException if no medical record was found
+     */
+    public MedicalRecord findByFirstNameAndLastName(String firstName,
+                                                    String lastName) {
+        try {
+<span class="fc" id="L106">            LOGGER.debug(</span>
+                    &quot;MedicalRecordService -&gt; Searching for person &quot; + firstName
+                            + &quot; &quot; + lastName + &quot; ...&quot;);
+<span class="fc" id="L109">            MedicalRecord medicalRecord = medicalRecordRepository.findByFirstNameAndLastName(</span>
+                    firstName, lastName);
+<span class="fc bfc" id="L111" title="All 2 branches covered.">            if (medicalRecord == null) {</span>
+<span class="fc" id="L112">                LOGGER.error(</span>
+                        &quot;MedicalRecordService -&gt; &quot; + firstName + &quot; &quot; + lastName
+                                + &quot; doesn't exist&quot;);
+<span class="fc" id="L115">                throw new NotFoundException(</span>
+                        &quot;Person &quot; + firstName + &quot; &quot; + lastName
+                                + &quot; doesn't exist&quot;);
+            }
+<span class="fc" id="L119">            LOGGER.info(</span>
+                    &quot;MedicalRecordService -&gt; Medical record for &quot; + firstName
+                            + &quot; &quot; + lastName + &quot; was found&quot;);
+<span class="fc" id="L122">            return medicalRecord;</span>
+<span class="fc" id="L123">        } catch (NotFoundException e) {</span>
+<span class="fc" id="L124">            return new MedicalRecord(null, &quot;&quot;, &quot;&quot;, null, new String[]{&quot;&quot;},</span>
+                    new String[]{&quot;&quot;});
+        }
+
+    }
+
+    /**
+     * Find medical records by first name and last name.
+     *
+     * @param firstName the first name
+     * @param lastName  the last name
+     * @return list of medical records
+     * @throws NotFoundException if no medical record was found
+     */
+    public List&lt;MedicalRecord&gt; findMedicalRecordsByFirstNameAndLastName(
+            String firstName, String lastName) {
+<span class="fc" id="L140">        LOGGER.debug(&quot;MedicalRecordService -&gt; Searching for person &quot; + firstName</span>
+                + &quot; &quot; + lastName + &quot; ...&quot;);
+<span class="fc" id="L142">        List&lt;MedicalRecord&gt; medicalRecordList = (List&lt;MedicalRecord&gt;) medicalRecordRepository</span>
+<span class="fc" id="L143">                .findMedicalRecordsByFirstNameAndLastName(firstName, lastName);</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">        if (medicalRecordList.isEmpty()) {</span>
+<span class="fc" id="L145">            LOGGER.error(&quot;MedicalRecordService -&gt; &quot; + firstName + &quot; &quot; + lastName</span>
+                    + &quot; doesn't exist&quot;);
+<span class="fc" id="L147">            throw new NotFoundException(</span>
+                    &quot;Person &quot; + firstName + &quot; &quot; + lastName + &quot; doesn't exist&quot;);
+        }
+<span class="fc" id="L150">        LOGGER.info(</span>
+                &quot;MedicalRecordService -&gt; Medical record for &quot; + firstName + &quot; &quot;
+                        + lastName + &quot; was found&quot;);
+<span class="fc" id="L153">        return medicalRecordList;</span>
+    }
+
+    /**
+     * Delete medical record.
+     *
+     * @param medicalRecord the medical record
+     */
+    public void deleteMedicalRecord(MedicalRecord medicalRecord) {
+<span class="fc" id="L162">        medicalRecordRepository.delete(medicalRecord);</span>
+<span class="fc" id="L163">    }</span>
+
+    /**
+     * Update medical record.
+     *
+     * @param medicalRecordBody    the medical record body
+     * @param medicalRecordUpdated the medical record updated
+     * @return the medical record updated
+     */
+    public MedicalRecord updateMedicalRecord(MedicalRecord medicalRecordBody,
+                                             MedicalRecord medicalRecordUpdated) {
+
+<span class="fc" id="L175">        medicalRecordUpdated.setBirthDate(medicalRecordBody.getBirthDate());</span>
+<span class="fc" id="L176">        medicalRecordUpdated.setMedications(medicalRecordBody.getMedications());</span>
+<span class="fc" id="L177">        medicalRecordUpdated.setAllergies(medicalRecordBody.getAllergies());</span>
+
+<span class="fc" id="L179">        return medicalRecordUpdated;</span>
+    }
+
+    /**
+     * Exists medical record by first name and last name boolean.
+     *
+     * @param firstName the first name
+     * @param lastName  the last name
+     * @return either true if medical record is existing or false if it's not
+     */
+    public boolean existsMedicalRecordByFirstNameAndLastName(String firstName,
+                                                             String lastName) {
+<span class="fc" id="L191">        return medicalRecordRepository.existsMedicalRecordByFirstNameAndLastName(</span>
+                firstName, lastName);
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

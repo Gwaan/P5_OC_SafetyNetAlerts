@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FirestationService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">alerts</a> &gt; <a href="index.source.html" class="el_package">com.safetynet.alerts.service</a> &gt; <span class="el_source">FirestationService.java</span></div><h1>FirestationService.java</h1><pre class="source lang-java linenums">package com.safetynet.alerts.service;
+
+import com.safetynet.alerts.exceptions.AlreadyExistingException;
+import com.safetynet.alerts.exceptions.NotFoundException;
+import com.safetynet.alerts.model.Firestation;
+import com.safetynet.alerts.repository.FirestationRepository;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+/**
+ * Firestation service.
+ *
+ * @author Gwen
+ * @version 1.0
+ */
+@Service
+public class FirestationService {
+
+    /**
+     * @see Logger
+     */
+<span class="fc" id="L25">    private static final Logger LOGGER = LogManager.getLogger(</span>
+            FirestationService.class);
+
+    /**
+     * @see FirestationRepository
+     */
+    private FirestationRepository fireStationRepository;
+
+
+    /**
+     * Instantiates a new Firestation service.
+     *
+     * @param fireStationRepository the fire station repository
+     */
+<span class="fc" id="L39">    public FirestationService(FirestationRepository fireStationRepository) {</span>
+<span class="fc" id="L40">        this.fireStationRepository = fireStationRepository;</span>
+<span class="fc" id="L41">    }</span>
+
+    /**
+     * Find all fire stations.
+     *
+     * @return all fire stations
+     */
+    public Iterable&lt;Firestation&gt; findAll() {
+<span class="fc" id="L49">        return fireStationRepository.findAll();</span>
+    }
+
+    /**
+     * Save firestation.
+     *
+     * @param firestation the firestation
+     * @return the firestation saved
+     */
+    public Firestation save(Firestation firestation) {
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        if (existsFirestationByAddressAndStation(firestation.getAddress(),</span>
+<span class="fc" id="L60">                firestation.getStation())) {</span>
+<span class="fc" id="L61">            LOGGER.error(&quot;FirestationService -&gt; Fire station number: &quot;</span>
+<span class="fc" id="L62">                    + firestation.getStation() + &quot; at address: &quot;</span>
+<span class="fc" id="L63">                    + firestation.getAddress() + &quot; is already existing&quot;);</span>
+<span class="fc" id="L64">            throw new AlreadyExistingException(</span>
+                    &quot;FirestationService -&gt; Fire station number: &quot;
+<span class="fc" id="L66">                            + firestation.getStation() + &quot; at address: &quot;</span>
+<span class="fc" id="L67">                            + firestation.getAddress()</span>
+                            + &quot; is already existing&quot;);
+        }
+<span class="fc" id="L70">        return fireStationRepository.save(firestation);</span>
+    }
+
+    /**
+     * Save updated firestation.
+     *
+     * @param firestation the firestation
+     * @return the firestation saved
+     */
+    public Firestation saveUpdated(Firestation firestation) {
+<span class="fc" id="L80">        return fireStationRepository.save(firestation);</span>
+    }
+
+    /**
+     * Save all fire stations.
+     *
+     * @param firestations the firestations
+     * @return list of fire stations saved
+     */
+    public Iterable&lt;Firestation&gt; saveAll(Iterable&lt;Firestation&gt; firestations) {
+<span class="fc" id="L90">        return fireStationRepository.saveAll(firestations);</span>
+    }
+
+    /**
+     * Delete firestation.
+     *
+     * @param firestation the firestation
+     */
+    public void deleteFirestation(Firestation firestation) {
+<span class="fc" id="L99">        fireStationRepository.delete(firestation);</span>
+<span class="fc" id="L100">    }</span>
+
+
+    /**
+     * Find firestation by address and station.
+     *
+     * @param address the address
+     * @param station the station
+     * @return the firestation
+     * @throws NotFoundException if no fire station was found
+     */
+    public Firestation findFirestationByAddressAndStation(String address,
+                                                          int station) {
+<span class="fc" id="L113">        LOGGER.debug(</span>
+                &quot;FirestationService -&gt; Searching for fire station n° &quot; + station
+                        + &quot; at address: &quot; + address + &quot; ...&quot;);
+<span class="fc" id="L116">        Firestation firestation = fireStationRepository.findByAddressAndStation(</span>
+                address, station);
+<span class="fc bfc" id="L118" title="All 2 branches covered.">        if (firestation == null) {</span>
+<span class="fc" id="L119">            LOGGER.error(&quot;FirestationService -&gt; Fire station n° &quot; + station</span>
+                    + &quot; at address: &quot; + address + &quot; doesn't exist&quot;);
+<span class="fc" id="L121">            throw new NotFoundException(</span>
+                    &quot;FirestationService -&gt; Fire station n° &quot; + station
+                            + &quot; at address: &quot; + address + &quot; doesn't exist&quot;);
+        }
+<span class="fc" id="L125">        LOGGER.info(&quot;FirestationService -&gt; Fire station n°  &quot; + station</span>
+                + &quot; at address: &quot; + address + &quot; was found&quot;);
+<span class="fc" id="L127">        return firestation;</span>
+    }
+
+    /**
+     * Find by station iterable.
+     *
+     * @param station the station
+     * @return list of fire station by station number
+     */
+    public Iterable&lt;String&gt; findByStation(int station) {
+<span class="fc" id="L137">        return fireStationRepository.findAddressesByStation(station);</span>
+    }
+
+    /**
+     * Update firestation.
+     *
+     * @param firestationBody     the firestation body
+     * @param firestationToUpdate the firestation to update
+     * @return the firestation updated
+     */
+    public Firestation updateFirestation(Firestation firestationBody,
+                                         Firestation firestationToUpdate) {
+<span class="fc" id="L149">        firestationToUpdate.setAddress(firestationBody.getAddress());</span>
+<span class="fc" id="L150">        firestationToUpdate.setStation(firestationBody.getStation());</span>
+
+<span class="fc" id="L152">        return firestationToUpdate;</span>
+    }
+
+    /**
+     * Exists firestation by address and station boolean.
+     *
+     * @param address the address
+     * @param station the station
+     * @return either true if fire station is existing or false if it's not
+     */
+    public boolean existsFirestationByAddressAndStation(String address,
+                                                        int station) {
+<span class="fc" id="L164">        return fireStationRepository.existsFirestationByAddressAndStation(</span>
+                address, station);
+    }
+
+    /**
+     * Find station by address list.
+     *
+     * @param address the address
+     * @return list of fire station covered by address
+     * @throws NotFoundException if no fire station was found
+     */
+    public List&lt;Integer&gt; findStationByAddress(String address) {
+<span class="fc" id="L176">        List&lt;Integer&gt; stationIds = (List&lt;Integer&gt;) fireStationRepository.findStationByAddress(</span>
+                address);
+<span class="fc" id="L178">        LOGGER.debug(</span>
+                &quot;FirestationService -&gt; Searching for fire station at address&quot;
+                        + address + &quot;...&quot;);
+<span class="fc bfc" id="L181" title="All 2 branches covered.">        if (stationIds.isEmpty()) {</span>
+<span class="fc" id="L182">            LOGGER.error(&quot;No station is existing at address: &quot; + address);</span>
+<span class="fc" id="L183">            throw new NotFoundException(</span>
+                    &quot;No station is existing at address: &quot; + address);
+
+        }
+<span class="fc" id="L187">        return stationIds;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="4e5fe0ec-9c2c-4600-b8a5-eabe1d5baa5b" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
+  <component name="ProjectId" id="1p9OJsVFyAC62Kdq8wjnT8vr5rc" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RequestMappingsPanelOrder0" value="0" />
+    <property name="RequestMappingsPanelOrder1" value="1" />
+    <property name="RequestMappingsPanelWidth0" value="75" />
+    <property name="RequestMappingsPanelWidth1" value="75" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/test/resources" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\gwenz\Desktop\Projets OC\P5_OC\P5_OC_SafetyNetAlerts\src\test\resources" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="com.safetynet.alerts" />
+    </key>
+  </component>
+  <component name="RunManager" selected="JUnit.All in alerts">
+    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
+      <option name="arquillianRunConfiguration">
+        <value>
+          <option name="containerStateName" value="" />
+        </value>
+      </option>
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="All in alerts" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="alerts" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PersonControllerIT" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="alerts" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.safetynet.alerts.integration.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.safetynet.alerts.integration" />
+      <option name="MAIN_CLASS_NAME" value="com.safetynet.alerts.integration.PersonControllerIT" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PersonControllerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="alerts" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.safetynet.alerts.controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.safetynet.alerts.controller" />
+      <option name="MAIN_CLASS_NAME" value="com.safetynet.alerts.controller.PersonControllerTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PersonInfoControllerIT.should_Return_A_PersonInfoDTO_List" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="alerts" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.safetynet.alerts.integration.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.safetynet.alerts.integration" />
+      <option name="MAIN_CLASS_NAME" value="com.safetynet.alerts.integration.PersonInfoControllerIT" />
+      <option name="METHOD_NAME" value="should_Return_A_PersonInfoDTO_List" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PhoneAlertControllerIT" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="alerts" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.safetynet.alerts.integration.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.safetynet.alerts.integration" />
+      <option name="MAIN_CLASS_NAME" value="com.safetynet.alerts.integration.PhoneAlertControllerIT" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="AlertsApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="alerts" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.safetynet.alerts.AlertsApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.All in alerts" />
+        <item itemvalue="JUnit.PhoneAlertControllerIT" />
+        <item itemvalue="JUnit.PersonInfoControllerIT.should_Return_A_PersonInfoDTO_List" />
+        <item itemvalue="JUnit.PersonControllerTest" />
+        <item itemvalue="JUnit.PersonControllerIT" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="4e5fe0ec-9c2c-4600-b8a5-eabe1d5baa5b" name="Default Changelist" comment="" />
+      <created>1614591774272</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1614591774272</updated>
+      <workItem from="1614591776223" duration="30597000" />
+      <workItem from="1614625142234" duration="959000" />
+      <workItem from="1614677416576" duration="12345000" />
+      <workItem from="1614722749462" duration="156000" />
+      <workItem from="1614722983051" duration="605000" />
+      <workItem from="1614765184670" duration="18107000" />
+      <workItem from="1614802520209" duration="3908000" />
+      <workItem from="1614808160100" duration="1559000" />
+      <workItem from="1614851298266" duration="19042000" />
+      <workItem from="1614892557812" duration="2679000" />
+      <workItem from="1614934468015" duration="3721000" />
+      <workItem from="1614945329290" duration="315000" />
+      <workItem from="1614945656131" duration="402000" />
+      <workItem from="1615208080827" duration="7367000" />
+      <workItem from="1615283375467" duration="2606000" />
+      <workItem from="1615314949680" duration="1137000" />
+      <workItem from="1615317031916" duration="650000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/safetynet/alerts/controller/FloodController.java</url>
+          <line>52</line>
+          <option name="timeStamp" value="67" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="JUnit">
+        <watch expression="existsPersonByFirstNameAndLastName(person.getFirstName(),&#10;                person.getLastName())" />
+        <watch expression="mapping" />
+      </configuration>
+    </watches-manager>
+  </component>
+</project>
